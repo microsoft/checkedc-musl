@@ -23,23 +23,23 @@ const struct _ns_flagdata _ns_flagdata[16] = {
 	{ 0x0000, 0 },
 };
 
-unsigned ns_get16(const unsigned char *cp)
+checked unsigned ns_get16(const unsigned char *cp)
 {
 	return cp[0]<<8 | cp[1];
 }
 
-unsigned long ns_get32(const unsigned char *cp)
+checked unsigned long ns_get32(const unsigned char *cp)
 {
 	return (unsigned)cp[0]<<24 | cp[1]<<16 | cp[2]<<8 | cp[3];
 }
 
-void ns_put16(unsigned s, unsigned char *cp)
+checked void ns_put16(unsigned s, unsigned char *cp)
 {
 	*cp++ = s>>8;
 	*cp++ = s;
 }
 
-void ns_put32(unsigned long l, unsigned char *cp)
+checked void ns_put32(unsigned long l, unsigned char *cp)
 {
 	*cp++ = l>>24;
 	*cp++ = l>>16;
@@ -77,9 +77,9 @@ bad:
 	return -1;
 }
 
-int ns_skiprr(const unsigned char *ptr, const unsigned char *eom, ns_sect section, int count)
+checked int ns_skiprr(const unsigned char *cp, const unsigned char *eom, ns_sect section, int count)
 {
-	const unsigned char *p = ptr;
+	array_ptr<const unsigned char> p : bounds(p, eom) = cp;
 	int r;
 
 	while (count--) {
@@ -95,7 +95,7 @@ int ns_skiprr(const unsigned char *ptr, const unsigned char *eom, ns_sect sectio
 			p += r;
 		}
 	}
-	return p - ptr;
+	return p - cp;
 bad:
 	errno = EMSGSIZE;
 	return -1;
