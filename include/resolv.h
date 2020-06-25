@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <arpa/nameser.h>
 #include <netinet/in.h>
+#include <stdchecked.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -132,8 +133,8 @@ int res_search(const char *, int, int, unsigned char *, int);
 int res_mkquery(int, const char *, int, int, const unsigned char *, int, const unsigned char*, unsigned char *, int);
 int res_send(const unsigned char *, int, unsigned char *, int);
 int dn_comp(const char *, unsigned char *, int, unsigned char **, unsigned char **);
-int dn_expand(const unsigned char *, const unsigned char *, const unsigned char *, char *, int);
-int dn_skipname(const unsigned char *, const unsigned char *);
+int dn_expand(const unsigned char *base : bounds(base, end), const unsigned char *end : itype(ptr<const unsigned char>), const unsigned char *src : bounds(src, end), char *dest : count(space > 254 ? 254 : space), int space);
+int dn_skipname(const unsigned char *s : bounds(s, end), const unsigned char *end : itype(ptr<const unsigned char>));
 
 #ifdef __cplusplus
 }
