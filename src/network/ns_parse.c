@@ -77,7 +77,7 @@ bad:
 	return -1;
 }
 
-checked int ns_skiprr(const unsigned char *cp, const unsigned char *eom, ns_sect section, int count)
+int ns_skiprr(const unsigned char *cp, const unsigned char *eom, ns_sect section, int count)
 {
 	array_ptr<const unsigned char> p : bounds(p, eom) = cp;
 	int r;
