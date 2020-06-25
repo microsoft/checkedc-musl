@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdchecked.h>
 
 #define __NAMESER	19991006
 #define NS_PACKETSZ	512
@@ -37,12 +38,12 @@ typedef enum __ns_sect {
 } ns_sect;
 
 typedef struct __ns_msg {
-	const unsigned char *_msg, *_eom;
-	uint16_t _id, _flags, _counts[ns_s_max];
-	const unsigned char *_sections[ns_s_max];
+	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(ptr<const unsigned char>);
+	uint16_t _id, _flags, _counts[ns_s_max] : itype(uint16_t checked[ns_s_max]);
+	const unsigned char *_sections[ns_s_max] : itype(array_ptr<const unsigned char> checked[ns_s_max]);
 	ns_sect _sect;
 	int _rrnum;
-	const unsigned char *_msg_ptr;
+	const unsigned char *_msg_ptr : itype(array_ptr<const unsigned char>);
 } ns_msg;
 
 struct _ns_flagdata {  int mask, shift;  };
@@ -57,12 +58,12 @@ extern const struct _ns_flagdata _ns_flagdata[];
 	(((handle)._flags & _ns_flagdata[flag].mask) >> _ns_flagdata[flag].shift)
 
 typedef	struct __ns_rr {
-	char		name[NS_MAXDNAME];
+	char		name[NS_MAXDNAME] : itype(char checked[NS_MAXDNAME]);
 	uint16_t	type;
 	uint16_t	rr_class;
 	uint32_t	ttl;
 	uint16_t	rdlength;
-	const unsigned char *rdata;
+	const unsigned char *rdata : itype(array_ptr<const unsigned char>);
 } ns_rr;
 
 #define ns_rr_name(rr)	(((rr).name[0] != '\0') ? (rr).name : ".")
@@ -308,15 +309,15 @@ typedef enum __ns_cert_types {
 #define NS_PUT16(s, cp) ns_put16((s), ((cp)+=2)-2)
 #define NS_PUT32(l, cp) ns_put32((l), ((cp)+=4)-4)
 
-unsigned ns_get16(const unsigned char *);
-unsigned long ns_get32(const unsigned char *);
-void ns_put16(unsigned, unsigned char *);
-void ns_put32(unsigned long, unsigned char *);
+unsigned ns_get16(const unsigned char * : count(2));
+unsigned long ns_get32(const unsigned char * : count(4));
+void ns_put16(unsigned, unsigned char * : count(2));
+void ns_put32(unsigned long, unsigned char * : count(4));
 
-int ns_initparse(const unsigned char *, int, ns_msg *);
-int ns_parserr(ns_msg *, ns_sect, int, ns_rr *);
-int ns_skiprr(const unsigned char *, const unsigned char *, ns_sect, int);
-int ns_name_uncompress(const unsigned char *, const unsigned char *, const unsigned char *, char *, size_t);
+int ns_initparse(const unsigned char * : count(len), int len, ns_msg * : itype(ptr<ns_msg>));
+int ns_parserr(ns_msg * : itype(ptr<ns_msg>), ns_sect, int, ns_rr * : itype(ptr<ns_rr>));
+int ns_skiprr(const unsigned char * cp : bounds(cp, eom), const unsigned char * eom : itype(ptr<const unsigned char>), ns_sect, int);
+int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom), const unsigned char *eom : itype(ptr<const unsigned char>), const unsigned char *src : bounds(src, eom), char *dst : itype(ptr<char>), size_t);
 
 
 #define	__BIND		19950621
