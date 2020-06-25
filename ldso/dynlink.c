@@ -1878,8 +1878,8 @@ void __dls3(size_t *sp, size_t *auxv)
 		if (!DT_DEBUG_INDIRECT && app.dynv[i]==DT_DEBUG)
 			app.dynv[i+1] = (size_t)&debug;
 		if (DT_DEBUG_INDIRECT && app.dynv[i]==DT_DEBUG_INDIRECT) {
-			size_t *ptr = (size_t *) app.dynv[i+1];
-			*ptr = (size_t)&debug;
+			size_t *s_ptr = (size_t *) app.dynv[i+1];
+			*s_ptr = (size_t)&debug;
 		}
 	}
 

@@ -123,7 +123,7 @@ int getnameinfo(const struct sockaddr *restrict sa, socklen_t sl,
 	char *restrict serv, socklen_t servlen,
 	int flags)
 {
-	char ptr[PTR_MAX];
+	char cp[PTR_MAX];
 	char buf[256], num[3*sizeof(int)+1];
 	int af = sa->sa_family;
 	unsigned char *a;
@@ -133,16 +133,16 @@ int getnameinfo(const struct sockaddr *restrict sa, socklen_t sl,
 	case AF_INET:
 		a = (void *)&((struct sockaddr_in *)sa)->sin_addr;
 		if (sl < sizeof(struct sockaddr_in)) return EAI_FAMILY;
-		mkptr4(ptr, a);
+		mkptr4(cp, a);
 		scopeid = 0;
 		break;
 	case AF_INET6:
 		a = (void *)&((struct sockaddr_in6 *)sa)->sin6_addr;
 		if (sl < sizeof(struct sockaddr_in6)) return EAI_FAMILY;
 		if (memcmp(a, "\0\0\0\0\0\0\0\0\0\0\xff\xff", 12))
-			mkptr6(ptr, a);
+			mkptr6(cp, a);
 		else
-			mkptr4(ptr, a+12);
+			mkptr4(cp, a+12);
 		scopeid = ((struct sockaddr_in6 *)sa)->sin6_scope_id;
 		break;
 	default:
@@ -156,7 +156,7 @@ int getnameinfo(const struct sockaddr *restrict sa, socklen_t sl,
 		}
 		if (!*buf && !(flags & NI_NUMERICHOST)) {
 			unsigned char query[18+PTR_MAX], reply[512];
-			int qlen = __res_mkquery(0, ptr, 1, RR_PTR,
+			int qlen = __res_mkquery(0, cp, 1, RR_PTR,
 				0, 0, 0, query, sizeof query);
 			query[3] = 0; /* don't need AD flag */
 			int rlen = __res_send(query, qlen, reply, sizeof reply);
