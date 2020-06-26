@@ -7,13 +7,13 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-void *memccpy(void *restrict dest, const void *restrict src, int c, size_t n)
+void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), int c,  size_t n) : itype(_Array_ptr<void>) byte_count(n)
 {
-	unsigned char *d = dest;
-	const unsigned char *s = src;
+        _Array_ptr<unsigned char> d : count(n) = _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(dest, count(n));
+        _Array_ptr<const unsigned char> s : count(n) = _Dynamic_bounds_cast<_Array_ptr<const unsigned char>>(src, count(n));
 
 	c = (unsigned char)c;
-#ifdef __GNUC__
+#ifdef __GNUC_ && !defined __clang___
 	typedef size_t __attribute__((__may_alias__)) word;
 	word *wd;
 	const word *ws;

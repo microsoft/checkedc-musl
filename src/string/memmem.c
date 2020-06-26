@@ -2,30 +2,30 @@
 #include <string.h>
 #include <stdint.h>
 
-static char *twobyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+static _Nt_array_ptr<char> twobyte_memmem(_Nt_array_ptr<const unsigned char> h : count(k), size_t k, _Array_ptr<const unsigned char> n : count(2)) : count(k)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
 	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-2;
-	return hw == nw ? (char *)h-2 : 0;
+		if (hw == nw) return (_Nt_array_ptr<char>)h-2;
+	return hw == nw ? (_Nt_array_ptr<char>)h-2 : 0;
 }
 
-static char *threebyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+static _Nt_array_ptr<char> threebyte_memmem(_Nt_array_ptr<const unsigned char> h : count(k), size_t k, _Nt_array_ptr<const unsigned char> n : count(3)) : count(k)
 {
 	uint32_t nw = (uint32_t)n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = (uint32_t)h[0]<<24 | h[1]<<16 | h[2]<<8;
 	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-		if (hw == nw) return (char *)h-3;
-	return hw == nw ? (char *)h-3 : 0;
+		if (hw == nw) return (_Nt_array_ptr<char>)h-3;
+	return hw == nw ? (_Nt_array_ptr<char>)h-3 : 0;
 }
 
-static char *fourbyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+static _Nt_array_ptr<char> fourbyte_memmem(_Nt_array_ptr<const unsigned char> h : count(k), size_t k, _Nt_array_ptr<const unsigned char> n: count(4)) : count(k)
 {
 	uint32_t nw = (uint32_t)n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = (uint32_t)h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
 	for (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-4;
-	return hw == nw ? (char *)h-4 : 0;
+		if (hw == nw) return (_Nt_array_ptr<char>)h-4;
+	return hw == nw ? (_Nt_array_ptr<char>)h-4 : 0;
 }
 
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -34,11 +34,11 @@ static char *fourbyte_memmem(const unsigned char *h, size_t k, const unsigned ch
 #define BITOP(a,b,op) \
  ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
 
-static char *twoway_memmem(const unsigned char *h, const unsigned char *z, const unsigned char *n, size_t l)
+static _Nt_array_ptr<char> twoway_memmem(_Nt_array_ptr<const unsigned char> h, _Nt_array_ptr<const unsigned char> z, _Nt_array_ptr<const unsigned char> n : count(l), size_t l)
 {
 	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
-	size_t byteset[32 / sizeof(size_t)] = { 0 };
-	size_t shift[256];
+	size_t byteset _Checked[32 / sizeof(size_t)] = { 0 };
+	size_t shift _Checked[256];
 
 	/* Computing length of needle and fill shift table */
 	for (i=0; i<l; i++)
@@ -120,15 +120,16 @@ static char *twoway_memmem(const unsigned char *h, const unsigned char *z, const
 		}
 		/* Compare left half */
 		for (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
-		if (k <= mem) return (char *)h;
+		if (k <= mem) return (_Nt_array_ptr<char>)h;
 		h += p;
 		mem = mem0;
 	}
 }
 
-void *memmem(const void *h0, size_t k, const void *n0, size_t l)
+void *memmem(const void *h0 : itype(_Array_ptr<const void>) byte_count(k), size_t k, const void *n0 : itype(_Array_ptr<const void>) byte_count(l), size_t l) : itype(_Array_ptr<void>) byte_count(k)
 {
-	const unsigned char *h = h0, *n = n0;
+	  _Nt_array_ptr<const unsigned char> h : count(k) = _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(h0, count(k));   
+	  _Nt_array_ptr<const unsigned char> n : count(l) = _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(n0, count(l));   
 
 	/* Return immediately on empty needle */
 	if (!l) return (void *)h;
@@ -137,7 +138,7 @@ void *memmem(const void *h0, size_t k, const void *n0, size_t l)
 	if (k<l) return 0;
 
 	/* Use faster algorithms for short needles */
-	h = memchr(h0, *n, k);
+	h = _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(memchr(h0, *n, k), count(k));
 	if (!h || l==1) return (void *)h;
 	k -= h - (const unsigned char *)h0;
 	if (k<l) return 0;

@@ -8,11 +8,11 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-void *memchr(const void *src, int c, size_t n)
+void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n), int c, size_t n) : itype(_Array_ptr<void>) bounds((_Array_ptr<char>)src, (_Array_ptr<char>) src + n)
 {
-	const unsigned char *s = src;
+	_Array_ptr<const unsigned char> s : count(n) = _Dynamic_bounds_cast<_Array_ptr<const unsigned char>>(src, count(n));
 	c = (unsigned char)c;
-#ifdef __GNUC__
+#ifdef __GNUC_ && !defined __clang___
 	for (; ((uintptr_t)s & ALIGN) && n && *s != c; s++, n--);
 	if (n && *s != c) {
 		typedef size_t __attribute__((__may_alias__)) word;

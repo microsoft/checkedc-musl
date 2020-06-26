@@ -6,10 +6,10 @@ typedef __attribute__((__may_alias__)) size_t WT;
 #define WS (sizeof(WT))
 #endif
 
-void *memmove(void *dest, const void *src, size_t n)
+void *memmove (void * dest: itype(_Array_ptr<void>) byte_count(n), const void * : itype(_Array_ptr<const void>) , size_t n) : bounds(dest, (_Array_ptr<char>)dest + n)
 {
-	char *d = dest;
-	const char *s = src;
+	_Nt_array_ptr<char> d = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(dest, bounds(dest, (_Array_ptr<char>)dest + n ));
+	_Nt_array_ptr<const char> s = _Dynamic_bounds_cast<_Nt_array_ptr<const char>>(src, count(n));
 
 	if (d==s) return d;
 	if ((uintptr_t)s-(uintptr_t)d-n <= -2*n) return memcpy(d, s, n);

@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdint.h>
 
-void *memset(void *dest, int c, size_t n)
+void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n), int, size_t n) : itype(_Array_ptr<void>) bounds(dest, (_Array_ptr<char>) dest + n)
 {
-	unsigned char *s = dest;
+	_Array_ptr<unsigned char> s : bounds(s, s + n) = _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(dest, count(n));	
 	size_t k;
 
 	/* Fill head and tail with minimal branching. Each
