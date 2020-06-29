@@ -23,23 +23,23 @@ const struct _ns_flagdata _ns_flagdata[16] = {
 	{ 0x0000, 0 },
 };
 
-checked unsigned ns_get16(const unsigned char *cp)
+unsigned ns_get16(const unsigned char *cp : count(2))
 {
 	return cp[0]<<8 | cp[1];
 }
 
-checked unsigned long ns_get32(const unsigned char *cp)
+checked unsigned long ns_get32(const unsigned char *cp : count(4))
 {
 	return (unsigned)cp[0]<<24 | cp[1]<<16 | cp[2]<<8 | cp[3];
 }
 
-checked void ns_put16(unsigned s, unsigned char *cp)
+checked void ns_put16(unsigned s, unsigned char *cp : count(2))
 {
 	*cp++ = s>>8;
 	*cp++ = s;
 }
 
-checked void ns_put32(unsigned long l, unsigned char *cp)
+checked void ns_put32(unsigned long l, unsigned char *cp : count(4))
 {
 	*cp++ = l>>24;
 	*cp++ = l>>16;

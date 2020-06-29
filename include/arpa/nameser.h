@@ -309,15 +309,50 @@ typedef enum __ns_cert_types {
 #define NS_PUT16(s, cp) ns_put16((s), ((cp)+=2)-2)
 #define NS_PUT32(l, cp) ns_put32((l), ((cp)+=4)-4)
 
-unsigned ns_get16(const unsigned char * : count(2));
-unsigned long ns_get32(const unsigned char * : count(4));
-void ns_put16(unsigned, unsigned char * : count(2));
-void ns_put32(unsigned long, unsigned char * : count(4));
+// ns_get16 returns as an unsigned the concatenation of the 2 bytes pointed by cp in reversed order.
+unsigned ns_get16(const unsigned char *cp : count(2));
 
-int ns_initparse(const unsigned char * : count(len), int len, ns_msg * : itype(ptr<ns_msg>));
-int ns_parserr(ns_msg * : itype(ptr<ns_msg>), ns_sect, int, ns_rr * : itype(ptr<ns_rr>));
-int ns_skiprr(const unsigned char * cp : bounds(cp, eom), const unsigned char * eom : itype(ptr<const unsigned char>), ns_sect, int);
-int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom), const unsigned char *eom : itype(ptr<const unsigned char>), const unsigned char *src : bounds(src, eom), char *dst : itype(ptr<char>), size_t);
+// ns_get32 returns as an unsigned long the concatenation of the 4 bytes pointed by cp in reversed order.
+unsigned long ns_get32(const unsigned char *cp : count(4));
+
+// ns_get16 puts to l the concatenation of the 2 bytes pointed by cp in reversed order.
+void ns_put16(unsigned l, unsigned char *cp : count(2));
+
+// ns_get32 puts to l the concatenation of the 4 bytes pointed by cp in reversed order.
+void ns_put32(unsigned long l, unsigned char *cp : count(4));
+
+// ns_initparse fills in the data structure pointed to by handle, which is a parameter passed to other routines.
+// msg: a pointer to the beginning of the response message buffer.
+// len: the size of msg.
+// handle: a pointer to the ns_msg struct to be filled.
+int ns_initparse(const unsigned char *msg : count(len) itype(array_ptr<const unsigned char>),
+	int len,
+	ns_msg *handle : itype(ptr<ns_msg>));
+
+// ns_parserr extracts information about a response record and stores it in rr,
+// which is a parameter passed to other name server libarary routines.
+int ns_parserr(ns_msg *handle : itype(ptr<ns_msg>),
+	ns_sect section,
+	int rrnum,
+	ns_rr *rr : itype(ptr<ns_rr>));
+
+int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
+	const unsigned char *eom : itype(ptr<const unsigned char>),
+	ns_sect section,
+	int count);
+
+// ns_name_uncompress expands a "compressed" domain name.
+// msg: a pointer to the beginning of your response packet (message).
+// eom: a pointer to the first byte after the message. It is used to make sure that
+// ns_name_uncompress doesn't go past the end of the message.
+// src: a pointer to the compressed domain name within the message.
+// dst: the place where ns_name_uncompress will store the expanded name.
+// dst_size: The size of the dst buffer.
+int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
+	const unsigned char *eom : itype(ptr<const unsigned char>),
+	const unsigned char *src : bounds(src, eom),
+	char *dst : count(dst_size) itype(nt_array_ptr<char>),
+	size_t dst_size);
 
 
 #define	__BIND		19950621
