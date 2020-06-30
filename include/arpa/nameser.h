@@ -7,7 +7,6 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdchecked.h>
 
 #define __NAMESER	19991006
 #define NS_PACKETSZ	512
@@ -38,12 +37,12 @@ typedef enum __ns_sect {
 } ns_sect;
 
 typedef struct __ns_msg {
-	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(ptr<const unsigned char>);
-	uint16_t _id, _flags, _counts[ns_s_max] : itype(uint16_t checked[ns_s_max]);
-	const unsigned char *_sections[ns_s_max] : itype(array_ptr<const unsigned char> checked[ns_s_max]);
+	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(_Ptr<const unsigned char>);
+	uint16_t _id, _flags, _counts[ns_s_max] : itype(uint16_t _Checked[ns_s_max]);
+	const unsigned char *_sections[ns_s_max] : itype(_Array_ptr<const unsigned char> _Checked[ns_s_max]);
 	ns_sect _sect;
 	int _rrnum;
-	const unsigned char *_msg_ptr : itype(array_ptr<const unsigned char>);
+	const unsigned char *_msg_ptr : itype(_Array_ptr<const unsigned char>);
 } ns_msg;
 
 struct _ns_flagdata {  int mask, shift;  };
@@ -58,12 +57,12 @@ extern const struct _ns_flagdata _ns_flagdata[];
 	(((handle)._flags & _ns_flagdata[flag].mask) >> _ns_flagdata[flag].shift)
 
 typedef	struct __ns_rr {
-	char		name[NS_MAXDNAME] : itype(char checked[NS_MAXDNAME]);
+	char		name[NS_MAXDNAME] : itype(char _Checked[NS_MAXDNAME]);
 	uint16_t	type;
 	uint16_t	rr_class;
 	uint32_t	ttl;
 	uint16_t	rdlength;
-	const unsigned char *rdata : itype(array_ptr<const unsigned char>);
+	const unsigned char *rdata : itype(_Array_ptr<const unsigned char>);
 } ns_rr;
 
 #define ns_rr_name(rr)	(((rr).name[0] != '\0') ? (rr).name : ".")
@@ -325,19 +324,19 @@ void ns_put32(unsigned long l, unsigned char *cp : count(4));
 // msg: a pointer to the beginning of the response message buffer.
 // len: the size of msg.
 // handle: a pointer to the ns_msg struct to be filled.
-int ns_initparse(const unsigned char *msg : count(len) itype(array_ptr<const unsigned char>),
+int ns_initparse(const unsigned char *msg : count(len) itype(_Array_ptr<const unsigned char>),
 	int len,
-	ns_msg *handle : itype(ptr<ns_msg>));
+	ns_msg *handle : itype(_Ptr<ns_msg>));
 
 // ns_parserr extracts information about a response record and stores it in rr,
 // which is a parameter passed to other name server libarary routines.
-int ns_parserr(ns_msg *handle : itype(ptr<ns_msg>),
+int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	ns_sect section,
 	int rrnum,
-	ns_rr *rr : itype(ptr<ns_rr>));
+	ns_rr *rr : itype(_Ptr<ns_rr>));
 
 int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
-	const unsigned char *eom : itype(ptr<const unsigned char>),
+	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	ns_sect section,
 	int count);
 
@@ -349,9 +348,9 @@ int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
 // dst: the place where ns_name_uncompress will store the expanded name.
 // dst_size: The size of the dst buffer.
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
-	const unsigned char *eom : itype(ptr<const unsigned char>),
+	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
-	char *dst : count(dst_size) itype(nt_array_ptr<char>),
+	char *dst : count(dst_size) itype(_Nt_array_ptr<char>),
 	size_t dst_size);
 
 

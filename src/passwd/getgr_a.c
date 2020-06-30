@@ -49,7 +49,7 @@ int __getgr_a(const char *name, gid_t gid, struct group *gr, char **buf, size_t 
 		size_t grlist_len = 0;
 		char gidbuf[11] = {0};
 		int swap = 0;
-		char *cp;
+		char *ptr;
 
 		if (name) {
 			key = name;
@@ -126,8 +126,8 @@ int __getgr_a(const char *name, gid_t gid, struct group *gr, char **buf, size_t 
 
 		if (groupbuf[GRMEMCNT]) {
 			mem[0][0] = *buf + groupbuf[GRNAMELEN] + groupbuf[GRPASSWDLEN];
-			for (cp = mem[0][0], i = 0; cp != mem[0][0]+grlist_len; cp++)
-				if (!*cp) mem[0][++i] = cp+1;
+			for (ptr = mem[0][0], i = 0; ptr != mem[0][0]+grlist_len; ptr++)
+				if (!*ptr) mem[0][++i] = ptr+1;
 			mem[0][i] = 0;
 
 			if (i != groupbuf[GRMEMCNT]) {
