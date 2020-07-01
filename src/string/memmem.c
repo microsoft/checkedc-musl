@@ -12,7 +12,8 @@ _Checked static _Array_ptr<char> twobyte_memmem(_Array_ptr<const unsigned char> 
 	return hw == nw ? (_Array_ptr<char>)h-2 : 0;
 }
 
-_Checked static _Array_ptr<char> threebyte_memmem(_Array_ptr<const unsigned char> h : count(k),                                             size_t k,
+_Checked static _Array_ptr<char> threebyte_memmem(_Array_ptr<const unsigned char> h : count(k),                                            
+	       			            size_t k,
 	                                   _Array_ptr<const unsigned char> n : count(3))
                                            : count(k)
 {

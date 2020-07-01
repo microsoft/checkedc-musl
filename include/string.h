@@ -133,7 +133,7 @@ void *memmem(const void *h0 : itype(_Array_ptr<const void>) byte_count(k),
 void *memrchr(const void *m : itype(_Array_ptr<const void>) byte_count(n), 
 	      int c, 
 	      size_t n) 
-	: itype(_Array_ptr<void>) byte_count(n);
+	      : itype(_Array_ptr<void>) byte_count(n);
 //returns a pointer to the byte following the last written byte
 //copies n bytes from the object beginning at src into the object
 //pointed to by dest
