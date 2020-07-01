@@ -315,10 +315,10 @@ unsigned ns_get16(const unsigned char *cp : count(2));
 // ns_get32 returns as an unsigned long the concatenation of the 4 bytes pointed by cp in reversed order.
 unsigned long ns_get32(const unsigned char *cp : count(4));
 
-// ns_get16 puts to l the concatenation of the 2 bytes pointed by cp in reversed order.
+// ns_get16 puts l as 2 bytes in reverse to cp.
 void ns_put16(unsigned l, unsigned char *cp : count(2));
 
-// ns_get32 puts to l the concatenation of the 4 bytes pointed by cp in reversed order.
+// ns_get32 puts l as 4 bytes in reverse to cp.
 void ns_put32(unsigned long l, unsigned char *cp : count(4));
 
 // ns_initparse fills in the data structure pointed to by handle using the response message
