@@ -339,13 +339,9 @@ int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
 	ns_sect section,
 	int count);
 
-// ns_name_uncompress expands a "compressed" domain name.
-// msg: a pointer to the beginning of your response packet (message).
-// eom: a pointer to the first byte after the message. It is used to make sure that
-// ns_name_uncompress doesn't go past the end of the message.
-// src: a pointer to the compressed domain name within the message.
-// dst: the place where ns_name_uncompress will store the expanded name.
-// dst_size: The size of the dst buffer.
+// ns_name_uncompress expands a "compressed" domain name in src within the message msg and stores
+// the result to dst which has size dst_size. eom is a pointer to the first byte after the message.
+// It is used to make sure that ns_name_uncompress doesn't go past the end of the message.
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
