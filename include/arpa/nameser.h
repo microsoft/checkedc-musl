@@ -345,7 +345,7 @@ int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
-	char *dst : count(dst_size - 1) itype(_Nt_array_ptr<char>),
+	char *dst : count(dst_size) itype(_Nt_array_ptr<char>),
 	size_t dst_size);
 
 

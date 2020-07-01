@@ -84,7 +84,7 @@ int ns_skiprr(const unsigned char *ptr: bounds(ptr, eom),
 	ns_sect section,
 	int count)
 {
-	_Array_ptr<const unsigned char> p : bounds(p, eom) = ptr;
+	_Array_ptr<const unsigned char> p : bounds(ptr, eom) = ptr;
 	int r;
 
 	while (count--) {
@@ -171,7 +171,7 @@ size:
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
-	char *dst : count(dstsiz - 1) itype(_Nt_array_ptr<char>),
+	char *dst : count(dstsiz) itype(_Nt_array_ptr<char>),
 	size_t dstsiz)
 {
 	int r;
