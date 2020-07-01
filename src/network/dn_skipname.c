@@ -1,8 +1,9 @@
 #include <resolv.h>
 
-int dn_skipname(const unsigned char *s, const unsigned char *end)
+_Checked int dn_skipname(const unsigned char *s : bounds(s, end),
+	const unsigned char *end : itype(_Ptr<const unsigned char>))
 {
-	const unsigned char *p = s;
+	_Array_ptr<const unsigned char> p : bounds(p, end) = s;
 	while (p < end)
 		if (!*p) return p-s+1;
 		else if (*p>=192)

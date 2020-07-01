@@ -81,7 +81,7 @@ char *bindtextdomain(const char *domainname, const char *dirname)
 	}
 
 	UNLOCK(lock);
-	
+
 	return (char *)p->dirname;
 }
 

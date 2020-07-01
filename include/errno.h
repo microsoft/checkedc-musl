@@ -12,7 +12,7 @@ extern "C" {
 #ifdef __GNUC__
 __attribute__((const))
 #endif
-int *__errno_location(void);
+int *__errno_location(void) : itype(_Ptr<int>);
 #define errno (*__errno_location())
 
 #ifdef _GNU_SOURCE

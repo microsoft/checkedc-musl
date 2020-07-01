@@ -11,7 +11,7 @@ extern "C" {
 
 struct ifaddrs {
 	struct ifaddrs *ifa_next;
-	char *ifa_name;
+	char *ifa_name : itype(_Nt_array_ptr<char>);
 	unsigned ifa_flags;
 	struct sockaddr *ifa_addr;
 	struct sockaddr *ifa_netmask;

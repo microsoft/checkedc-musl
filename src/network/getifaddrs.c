@@ -35,7 +35,7 @@ struct ifaddrs_storage {
 	struct ifaddrs_storage *hash_next;
 	union sockany addr, netmask, ifu;
 	unsigned int index;
-	char name[IFNAMSIZ+1];
+	char name[IFNAMSIZ+1] : itype(char _Nt_checked[IFNAMSIZ+1]);
 };
 
 struct ifaddrs_ctx {

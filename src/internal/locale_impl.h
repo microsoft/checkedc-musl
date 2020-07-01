@@ -11,7 +11,7 @@
 struct __locale_map {
 	const void *map;
 	size_t map_size;
-	char name[LOCALE_NAME_MAX+1];
+	char name[LOCALE_NAME_MAX+1] : itype(char _Nt_checked[LOCALE_NAME_MAX+1]);
 	const struct __locale_map *next;
 };
 

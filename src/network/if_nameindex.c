@@ -13,7 +13,7 @@ struct ifnamemap {
 	unsigned int hash_next;
 	unsigned int index;
 	unsigned char namelen;
-	char name[IFNAMSIZ];
+	char name[IFNAMSIZ] : itype(char _Nt_checked[IFNAMSIZ]);
 };
 
 struct ifnameindexctx {
@@ -54,7 +54,7 @@ static int netlink_msg_to_nameindex(void *pctx, struct nlmsghdr *h)
 			map = &ctx->list[i-1];
 			if (map->index == index &&
 			    map->namelen == namelen &&
-			    memcmp(map->name, RTA_DATA(rta), namelen) == 0)
+			    memcmp((void *)map->name, RTA_DATA(rta), namelen) == 0)
 				return 0;
 			i = map->hash_next;
 		}
@@ -70,7 +70,7 @@ static int netlink_msg_to_nameindex(void *pctx, struct nlmsghdr *h)
 		map = &ctx->list[ctx->num];
 		map->index = index;
 		map->namelen = namelen;
-		memcpy(map->name, RTA_DATA(rta), namelen);
+		memcpy((void *)map->name, RTA_DATA(rta), namelen);
 		ctx->str_bytes += namelen + 1;
 		ctx->num++;
 		map->hash_next = ctx->hash[bucket];
@@ -100,7 +100,7 @@ struct if_nameindex *if_nameindex()
 	for (i = ctx->num, d = ifs, s = ctx->list; i; i--, s++, d++) {
 		d->if_index = s->index;
 		d->if_name = p;
-		memcpy(p, s->name, s->namelen);
+		memcpy(p, (void *)s->name, s->namelen);
 		p += s->namelen;
 		*p++ = 0;
 	}

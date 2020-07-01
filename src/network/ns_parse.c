@@ -47,15 +47,23 @@ _Checked void ns_put32(unsigned long l, unsigned char *cp : count(4))
 	*cp++ = l;
 }
 
-int ns_initparse(const unsigned char *msg : count(msglen),
+_Checked int ns_initparse(const unsigned char *msg : count(msglen),
 	int msglen,
 	ns_msg *handle : itype(_Ptr<ns_msg>))
 {
 	int i, r;
 
-	handle->_msg = msg;
-	handle->_eom = msg + msglen;
+	// Temporarily use an unchecked block to mask a compiler warning on inability to prove that the inferred
+	// bounds(msg, handle->_eom) implies bounds(msg, msg + msglen) on the assignment to handle->_msg.
+	// TODO(yahsun): the compiler should be able to prove the above bounds invariant when the two assignments
+	// are in a boundled block. So the warning(s) should disapear once boundled blocks are implemented.
+	_Unchecked {
+		handle->_msg = msg;
+		handle->_eom = msg + msglen;
+	}
+
 	if (msglen < (2 + ns_s_max) * NS_INT16SZ) goto bad;
+	// Invariant: msglen >= (2 + ns_s_max) * NS_INT16SZ.
 	NS_GET16(handle->_id, msg);
 	NS_GET16(handle->_flags, msg);
 	for (i = 0; i < ns_s_max; i++) NS_GET16(handle->_counts[i], msg);
@@ -79,7 +87,7 @@ bad:
 	return -1;
 }
 
-int ns_skiprr(const unsigned char *ptr: bounds(ptr, eom),
+_Checked int ns_skiprr(const unsigned char *ptr: bounds(ptr, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	ns_sect section,
 	int count)
@@ -125,6 +133,8 @@ int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 		handle->_rrnum = 0;
 		handle->_msg_ptr = handle->_sections[section];
 	}
+	// _Array_ptr<const unsigned char> msg_ptr : bounds(msg_ptr, handle->_eom) =
+	// 	_Assume_bounds_cast<_Array_ptr<const unsigned char>>(handle->_msg_ptr, bounds(msg_ptr, handle->_eom));
 	if (rrnum > handle->_rrnum) {
 		r = ns_skiprr(handle->_msg_ptr, handle->_eom, section, rrnum - handle->_rrnum);
 		if (r < 0) return -1;
