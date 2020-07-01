@@ -9,11 +9,13 @@
 
 void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), int c,  size_t n) : itype(_Array_ptr<void>) byte_count(n)
 {
-        _Array_ptr<unsigned char> d : count(n) = _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(dest, count(n));
-        _Array_ptr<const unsigned char> s : count(n) = _Dynamic_bounds_cast<_Array_ptr<const unsigned char>>(src, count(n));
+        _Array_ptr<unsigned char> d : count(n) = (_Array_ptr<unsigned char>)dest;
+        _Array_ptr<const unsigned char> s : count(n) = (_Array_ptr<const unsigned char>)src;
 
 	c = (unsigned char)c;
-#ifdef __GNUC_ && !defined __clang___
+
+//make sure the code is not compiling by clang	
+#ifdef __GNUC_ && !defined __clang__
 	typedef size_t __attribute__((__may_alias__)) word;
 	word *wd;
 	const word *ws;

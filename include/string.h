@@ -22,12 +22,32 @@ extern "C" {
 
 #include <bits/alltypes.h>
 
-
-void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), size_t n) : itype(_Array_ptr<void>) byte_count(n); //return bound needs to be revisited
-void *memmove (void * dest: itype(_Array_ptr<void>) byte_count(n), const void * : itype(_Array_ptr<const void>), size_t n) : bounds(dest, (_Array_ptr<char>)dest + n);
-void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n), int, size_t n) : itype(_Array_ptr<void>) bounds(dest, (_Array_ptr<char>) dest + n);
-int memcmp (const void * : itype(_Array_ptr<const void>) byte_count(n), const void * : itype(_Array_ptr<const void>) byte_count(n), size_t n);
-void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n), int, size_t n) : itype(_Array_ptr<void>) bounds((_Array_ptr<char>)src, (_Array_ptr<char>) src + n);
+//returns a pointer to dest : Copies n bytes form src to the memory region dest points to 
+void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), 
+	      const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), 
+	      size_t n) 
+	     : itype(_Array_ptr<void>) byte_count(n); 
+//return a pointer to dest: copies n bytes from memory area src to memory
+//       area dest. The memory areas may overlap.
+void *memmove (void *dest: itype(_Array_ptr<void>) byte_count(n), 
+	      const void * : itype(_Array_ptr<const void>) byte_count(n),
+	      size_t n) 
+	      : byte_count(n);
+//returns a pointer to dest: fills the first n bytes of the memory area 
+//pointed to by dest with the constant byte c
+void *memset (void *dest: itype(_Array_ptr<void>) byte_count(n), 
+	      int c, 
+	      size_t n) 
+	      : itype(_Array_ptr<void>) byte_count(n);
+//
+int memcmp (const void * : itype(_Array_ptr<const void>) byte_count(n), 
+	   const void * : itype(_Array_ptr<const void>) byte_count(n), 
+	   size_t n);
+//
+void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n), 
+	     int, 
+	     size_t n) 
+	     : itype(_Array_ptr<void>) byte_count(n);
 
 char *strcpy (char *__restrict, const char *__restrict);
 char *strncpy (char *__restrict, const char *__restrict, size_t);
@@ -91,7 +111,8 @@ void explicit_bzero (void *, size_t);
 int strverscmp (const char *, const char *);
 char *strchrnul(const char *, int);
 char *strcasestr(const char *, const char *);
-void *memmem(const void * : itype(_Array_ptr<const void>) byte_count(k), size_t k, const void * : itype(_Array_ptr<const void>) byte_count(l), size_t l) : itype(_Array_ptr<void>) byte_count(k);
+//void *memmem(const void * : itype(_Array_ptr<const void>) byte_count(k), size_t k, const void * : itype(_Array_ptr<const void>) byte_count(l), size_t l) : itype(_Array_ptr<void>) byte_count(k);
+void *memmem(const void * : itype(_Array_ptr<const void>) byte_count(k), size_t k, const void * : itype(_Array_ptr<const void>) byte_count(l), size_t l) : itype(_Array_ptr<void>);
 void *memrchr(const void * : itype(_Array_ptr<const void>) byte_count(n), int, size_t n) : itype(_Array_ptr<void>) byte_count(n);
 void *mempcpy(void * : itype(_Array_ptr<void>) byte_count(n), const void * : itype(_Array_ptr<const void>) byte_count(n), size_t n) : itype(_Array_ptr<void>);
 #ifndef __cplusplus

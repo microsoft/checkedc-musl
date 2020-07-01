@@ -1,9 +1,10 @@
 #include <string.h>
 #include <stdint.h>
 
-void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n), int, size_t n) : itype(_Array_ptr<void>) bounds(dest, (_Array_ptr<char>) dest + n)
+void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n), int c, size_t n) : itype(_Array_ptr<void>) byte_Count(n)
+_Checked										   
 {
-	_Array_ptr<unsigned char> s : bounds(s, s + n) = _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(dest, count(n));	
+	_Array_ptr<unsigned char> s : count(n) = dest;	
 	size_t k;
 
 	/* Fill head and tail with minimal branching. Each
