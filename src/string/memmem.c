@@ -2,7 +2,9 @@
 #include <string.h>
 #include <stdint.h>
 
-_Checked static _Array_ptr<char> twobyte_memmem(_Array_ptr<const unsigned char> h : count(k), size_t k, _Array_ptr<const unsigned char> n : count(2)) : count(k)
+_Checked static _Array_ptr<char> twobyte_memmem(_Array_ptr<const unsigned char> h : count(k),
+	                               size_t k, _Array_ptr<const unsigned char> n : count(2)) 
+	                               : count(k)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
 	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
@@ -10,17 +12,21 @@ _Checked static _Array_ptr<char> twobyte_memmem(_Array_ptr<const unsigned char> 
 	return hw == nw ? (_Array_ptr<char>)h-2 : 0;
 }
 
-_Checked static _Array_ptr<char> threebyte_memmem(_Array_ptr<const unsigned char> h : count(k), size_t k, _Array_ptr<const unsigned char> n : count(3)) : count(k)
+_Checked static _Array_ptr<char> threebyte_memmem(_Array_ptr<const unsigned char> h : count(k),                                             size_t k,
+	                                   _Array_ptr<const unsigned char> n : count(3))
+                                           : count(k)
 {
 	uint32_t nw = (uint32_t)n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = (uint32_t)h[0]<<24 | h[1]<<16 | h[2]<<8;
-	//for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-	for (h+=3, k-=3; k; k--, hw = hw<<8 | *h++)
+	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
 		if (hw == nw) return (_Array_ptr<char>)h-3;
 	return hw == nw ? (_Array_ptr<char>)h-3 : 0;
 }
 
-_Checked static _Array_ptr<char> fourbyte_memmem(_Array_ptr<const unsigned char> h : count(k), size_t k, _Array_ptr<const unsigned char> n: count(4)) : count(k)
+_Checked static _Array_ptr<char> fourbyte_memmem(_Array_ptr<const unsigned char> h : count(k),
+	       		size_t k, 
+			_Array_ptr<const unsigned char> n: count(4)) 
+			: count(k)
 {
 	uint32_t nw = (uint32_t)n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = (uint32_t)h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
@@ -35,8 +41,10 @@ _Checked static _Array_ptr<char> fourbyte_memmem(_Array_ptr<const unsigned char>
 #define BITOP(a,b,op) \
  ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
 
-//_Checked static _Array_ptr<char> twoway_memmem(_Array_ptr<const unsigned char> h : count(z - h), _Array_ptr<const unsigned char> z, _Array_ptr<const unsigned char> n : count(l), size_t l)
-_Checked static _Array_ptr<char> twoway_memmem(_Array_ptr<const unsigned char> h : count(z - h), _Array_ptr<const unsigned char> z, _Array_ptr<const unsigned char> n : count(l), size_t l)
+_Checked static _Array_ptr<char> twoway_memmem(_Array_ptr<const unsigned char> h : count(z - h),
+	       			_Array_ptr<const unsigned char> z, 
+				_Array_ptr<const unsigned char> n : count(l), 
+				size_t l)
 {
 	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
 	size_t byteset _Checked[32 / sizeof(size_t)] = { 0 };
@@ -128,13 +136,14 @@ _Checked static _Array_ptr<char> twoway_memmem(_Array_ptr<const unsigned char> h
 	}
 }
 
-//void *memmem(const void *h0 : itype(_Array_ptr<const void>) byte_count(k), size_t k, const void *n0 : itype(_Array_ptr<const void>) byte_count(l), size_t l) : itype(_Array_ptr<void>) byte_count(k)
-void *memmem(const void *h0 : itype(_Array_ptr<const void>) byte_count(k), size_t k, const void *n0 : itype(_Array_ptr<const void>) byte_count(l), size_t l) : itype(_Array_ptr<void>) 
+void *memmem(const void *h0 : itype(_Array_ptr<const void>) byte_count(k),
+	     size_t k, 
+	     const void *n0 : itype(_Array_ptr<const void>) byte_count(l),
+	     size_t l) 
+	     : itype(_Array_ptr<void>) byte_count(k) 
 
 _Checked
 {
-	//  _Nt_array_ptr<const unsigned char> h : count(k) = _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(h0, count(k));   
-	 // _Nt_array_ptr<const unsigned char> n : count(l) = _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(n0, count(l));   
 
 	  _Array_ptr<const unsigned char> h : count(k) = (_Array_ptr<const unsigned char>)h0;   
 	  _Array_ptr<const unsigned char> n : count(l) =(_Array_ptr<const unsigned char>)n0;   
@@ -149,14 +158,10 @@ _Checked
 	if (!h || l==1) return (_Array_ptr<void>)h;
 	k -= h - (_Array_ptr<const unsigned char>) h0;
 	if (k<l) return 0;
-	//if (l==2) return (void *)twobyte_memmem(h, k, n);
-	//if (l==2) return (_Array_ptr<void>)twobyte_memmem(h, k, n);
+
 	if (l==2) return twobyte_memmem(h, k, n);
-	//if (l==3) return (_Array_ptr<void>)threebyte_memmem(h, k, n);
 	if (l==3) return threebyte_memmem(h, k, n);
-	//if (l==4) return (_Array_ptr<void>)fourbyte_memmem(h, k, n);
 	if (l==4) return fourbyte_memmem(h, k, n);
 
-	//return (_Array_ptr<void>)twoway_memmem(h, h+k, n, l);
 	return (_Array_ptr<void>)twoway_memmem(h, h+k, n, l);
 }

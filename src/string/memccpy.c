@@ -7,7 +7,12 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), int c,  size_t n) : itype(_Array_ptr<void>) byte_count(n)
+void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
+	      const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), 
+	      int c,  
+	      size_t n) 
+	     : itype(_Array_ptr<void>) byte_count(n)
+_Checked
 {
         _Array_ptr<unsigned char> d : count(n) = (_Array_ptr<unsigned char>)dest;
         _Array_ptr<const unsigned char> s : count(n) = (_Array_ptr<const unsigned char>)src;
@@ -15,7 +20,8 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
 	c = (unsigned char)c;
 
 //make sure the code is not compiling by clang	
-#ifdef __GNUC_ && !defined __clang__
+#ifdef __GNUC__
+#ifndef __clang__	
 	typedef size_t __attribute__((__may_alias__)) word;
 	word *wd;
 	const word *ws;
@@ -28,6 +34,7 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
 		       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
 		d=(void *)wd; s=(const void *)ws;
 	}
+#endif	
 #endif
 	for (; n && (*d=*s)!=c; n--, s++, d++);
 tail:

@@ -2,24 +2,25 @@
 #include <stdint.h>
 #include <endian.h>
 
-void *memcpy222 (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), 
-	     const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n) 
+void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n), 
+	     const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), 
 	     size_t n) 
 	     : itype(_Array_ptr<void>) byte_count(n)
 _Checked
 {
         _Array_ptr<unsigned char> d : count(n) = dest;
-        _Array_ptr<const unsigned char> s : count(n) = sric;
+        _Array_ptr<const unsigned char> s : count(n) = src;
 
-#ifdef __GNUC__
-
+#ifdef __GNUC__ 
+#ifndef __clang__ //make sure clang does not compile this portion
+	
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define LS >>
 #define RS <<
 #else
 #define LS <<
 #define RS >>
-#endif
+#endif	
 
 	typedef uint32_t __attribute__((__may_alias__)) u32;
 	uint32_t w, x;
@@ -122,7 +123,7 @@ _Checked
 	}
 	return dest;
 #endif
-
+#endif
 	for (; n; n--) *d++ = *s++;
 	return dest;
 }

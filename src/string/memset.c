@@ -1,7 +1,10 @@
 #include <string.h>
 #include <stdint.h>
 
-void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n), int c, size_t n) : itype(_Array_ptr<void>) byte_Count(n)
+void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n),
+	      int c, 
+	      size_t n) 
+	      : byte_count(n)
 _Checked										   
 {
 	_Array_ptr<unsigned char> s : count(n) = dest;	
@@ -35,6 +38,7 @@ _Checked
 	n &= -4;
 
 #ifdef __GNUC__
+#ifndef __clang__ //make sure clang does not compile this portion
 	typedef uint32_t __attribute__((__may_alias__)) u32;
 	typedef uint64_t __attribute__((__may_alias__)) u64;
 
@@ -82,6 +86,7 @@ _Checked
 		*(u64 *)(s+16) = c64;
 		*(u64 *)(s+24) = c64;
 	}
+#endif	
 #else
 	/* Pure C fallback with no aliasing violations. */
 	for (; n; n--, s++) *s = c;
