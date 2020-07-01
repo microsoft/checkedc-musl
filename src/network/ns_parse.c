@@ -47,7 +47,9 @@ _Checked void ns_put32(unsigned long l, unsigned char *cp : count(4))
 	*cp++ = l;
 }
 
-int ns_initparse(const unsigned char *msg, int msglen, ns_msg *handle)
+int ns_initparse(const unsigned char *msg : count(msglen),
+	int msglen,
+	ns_msg *handle : itype(_Ptr<ns_msg>))
 {
 	int i, r;
 
@@ -77,7 +79,10 @@ bad:
 	return -1;
 }
 
-int ns_skiprr(const unsigned char *ptr, const unsigned char *eom, ns_sect section, int count)
+int ns_skiprr(const unsigned char *ptr: bounds(ptr, eom),
+	const unsigned char *eom : itype(_Ptr<const unsigned char>),
+	ns_sect section,
+	int count)
 {
 	_Array_ptr<const unsigned char> p : bounds(p, eom) = ptr;
 	int r;
@@ -101,7 +106,10 @@ bad:
 	return -1;
 }
 
-int ns_parserr(ns_msg *handle, ns_sect section, int rrnum, ns_rr *rr)
+int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
+	ns_sect section,
+	int rrnum,
+	ns_rr *rr : itype(_Ptr<ns_rr>))
 {
 	int r;
 
@@ -160,8 +168,11 @@ size:
 	return -1;
 }
 
-int ns_name_uncompress(const unsigned char *msg, const unsigned char *eom,
-                       const unsigned char *src, char *dst, size_t dstsiz)
+int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
+	const unsigned char *eom : itype(_Ptr<const unsigned char>),
+	const unsigned char *src : bounds(src, eom),
+	char *dst : count(dstsiz - 1) itype(_Nt_array_ptr<char>),
+	size_t dstsiz)
 {
 	int r;
 	r = dn_expand(msg, eom, src, dst, dstsiz);
