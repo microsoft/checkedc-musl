@@ -23,23 +23,23 @@ const struct _ns_flagdata _ns_flagdata[16] = {
 	{ 0x0000, 0 },
 };
 
-unsigned ns_get16(const unsigned char *cp)
+_Checked unsigned ns_get16(const unsigned char *cp : count(2))
 {
 	return cp[0]<<8 | cp[1];
 }
 
-unsigned long ns_get32(const unsigned char *cp)
+_Checked unsigned long ns_get32(const unsigned char *cp : count(4))
 {
 	return (unsigned)cp[0]<<24 | cp[1]<<16 | cp[2]<<8 | cp[3];
 }
 
-void ns_put16(unsigned s, unsigned char *cp)
+_Checked void ns_put16(unsigned s, unsigned char *cp : count(2))
 {
 	*cp++ = s>>8;
 	*cp++ = s;
 }
 
-void ns_put32(unsigned long l, unsigned char *cp)
+_Checked void ns_put32(unsigned long l, unsigned char *cp : count(4))
 {
 	*cp++ = l>>24;
 	*cp++ = l>>16;
@@ -47,7 +47,9 @@ void ns_put32(unsigned long l, unsigned char *cp)
 	*cp++ = l;
 }
 
-int ns_initparse(const unsigned char *msg, int msglen, ns_msg *handle)
+int ns_initparse(const unsigned char *msg : count(msglen),
+	int msglen,
+	ns_msg *handle : itype(_Ptr<ns_msg>))
 {
 	int i, r;
 
@@ -77,9 +79,12 @@ bad:
 	return -1;
 }
 
-int ns_skiprr(const unsigned char *ptr, const unsigned char *eom, ns_sect section, int count)
+int ns_skiprr(const unsigned char *ptr: bounds(ptr, eom),
+	const unsigned char *eom : itype(_Ptr<const unsigned char>),
+	ns_sect section,
+	int count)
 {
-	const unsigned char *p = ptr;
+	_Array_ptr<const unsigned char> p : bounds(ptr, eom) = ptr;
 	int r;
 
 	while (count--) {
@@ -101,7 +106,10 @@ bad:
 	return -1;
 }
 
-int ns_parserr(ns_msg *handle, ns_sect section, int rrnum, ns_rr *rr)
+int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
+	ns_sect section,
+	int rrnum,
+	ns_rr *rr : itype(_Ptr<ns_rr>))
 {
 	int r;
 
@@ -160,8 +168,11 @@ size:
 	return -1;
 }
 
-int ns_name_uncompress(const unsigned char *msg, const unsigned char *eom,
-                       const unsigned char *src, char *dst, size_t dstsiz)
+int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
+	const unsigned char *eom : itype(_Ptr<const unsigned char>),
+	const unsigned char *src : bounds(src, eom),
+	char *dst : count(dstsiz) itype(_Nt_array_ptr<char>),
+	size_t dstsiz)
 {
 	int r;
 	r = dn_expand(msg, eom, src, dst, dstsiz);
