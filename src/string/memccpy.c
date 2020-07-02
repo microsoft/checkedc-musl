@@ -8,18 +8,18 @@
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
 void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
-	      const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), 
-	      int c,  
-	      size_t n) 
-	     : itype(_Array_ptr<void>) byte_count(n)
+	       const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n), 
+	       int c,  
+	       size_t n) 
+	      : itype(_Array_ptr<void>) byte_count(n)
 _Checked
 {
         _Array_ptr<unsigned char> d : count(n) = (_Array_ptr<unsigned char>)dest;
         _Array_ptr<const unsigned char> s : count(n) = (_Array_ptr<const unsigned char>)src;
 
 	c = (unsigned char)c;
-
-//make sure the code is not compiling by clang	
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
 #ifndef __clang__	
 	typedef size_t __attribute__((__may_alias__)) word;

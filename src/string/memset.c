@@ -37,8 +37,10 @@ _Checked
 	n -= k;
 	n &= -4;
 
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__ //make sure clang does not compile this portion
+#ifndef __clang__ 
 	typedef uint32_t __attribute__((__may_alias__)) u32;
 	typedef uint64_t __attribute__((__may_alias__)) u64;
 

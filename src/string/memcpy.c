@@ -11,9 +11,10 @@ _Checked
         _Array_ptr<unsigned char> d : count(n) = dest;
         _Array_ptr<const unsigned char> s : count(n) = src;
 
-#ifdef __GNUC__ 
-#ifndef __clang__ //make sure clang does not compile this portion
-	
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
+#ifdef __GNUC__
+#ifndef __clang__	
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define LS >>
 #define RS <<
@@ -21,7 +22,6 @@ _Checked
 #define LS <<
 #define RS >>
 #endif	
-
 	typedef uint32_t __attribute__((__may_alias__)) u32;
 	uint32_t w, x;
 

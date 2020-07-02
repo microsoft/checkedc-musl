@@ -3,8 +3,8 @@
 #include <stdint.h>
 
 _Checked static _Array_ptr<char> twobyte_memmem(_Array_ptr<const unsigned char> h : count(k),
-	                               size_t k, _Array_ptr<const unsigned char> n : count(2)) 
-	                               : count(k)
+	                                        size_t k, _Array_ptr<const unsigned char> n : count(2)) 
+	                                        : count(k)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
 	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
@@ -13,9 +13,9 @@ _Checked static _Array_ptr<char> twobyte_memmem(_Array_ptr<const unsigned char> 
 }
 
 _Checked static _Array_ptr<char> threebyte_memmem(_Array_ptr<const unsigned char> h : count(k),                                            
-	       			            size_t k,
-	                                   _Array_ptr<const unsigned char> n : count(3))
-                                           : count(k)
+	       			                  size_t k,
+	                                          _Array_ptr<const unsigned char> n : count(3))
+                                                  : count(k)
 {
 	uint32_t nw = (uint32_t)n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = (uint32_t)h[0]<<24 | h[1]<<16 | h[2]<<8;
@@ -25,9 +25,9 @@ _Checked static _Array_ptr<char> threebyte_memmem(_Array_ptr<const unsigned char
 }
 
 _Checked static _Array_ptr<char> fourbyte_memmem(_Array_ptr<const unsigned char> h : count(k),
-	       		size_t k, 
-			_Array_ptr<const unsigned char> n: count(4)) 
-			: count(k)
+	       		                         size_t k, 
+			                         _Array_ptr<const unsigned char> n: count(4)) 
+			                         : count(k)
 {
 	uint32_t nw = (uint32_t)n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = (uint32_t)h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
@@ -43,9 +43,9 @@ _Checked static _Array_ptr<char> fourbyte_memmem(_Array_ptr<const unsigned char>
  ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
 
 _Checked static _Array_ptr<char> twoway_memmem(_Array_ptr<const unsigned char> h : count(z - h),
-	       			_Array_ptr<const unsigned char> z, 
-				_Array_ptr<const unsigned char> n : count(l), 
-				size_t l)
+	       		                       _Array_ptr<const unsigned char> z, 
+				               _Array_ptr<const unsigned char> n : count(l), 
+				               size_t l)
 {
 	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
 	size_t byteset _Checked[32 / sizeof(size_t)] = { 0 };
