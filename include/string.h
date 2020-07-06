@@ -119,15 +119,7 @@ void explicit_bzero (void *, size_t);
 int strverscmp (const char *, const char *);
 char *strchrnul(const char *, int);
 char *strcasestr(const char *, const char *);
-// Returns a pointer to the beginning of the substring(n0).
-// Finds the start of the first occurrence of the substring n0 of length l
-// in the memory area h0 of length k
-void *memmem(const void *h0 : itype(_Array_ptr<const void>) byte_count(k),
-             size_t k,
-             const void *n0 : itype(_Array_ptr<const void>) byte_count(l),
-             size_t l)
-  : itype(_Array_ptr<void>) byte_count(k);
-
+void *memmem(const void *, size_t, const void *, size_t);
 // Returns a pointer to the matching byte.
 // Searches backward from the end of the n bytes pointed to by m
 // for the first instance of c.
