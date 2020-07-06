@@ -119,6 +119,9 @@ void explicit_bzero (void *, size_t);
 int strverscmp (const char *, const char *);
 char *strchrnul(const char *, int);
 char *strcasestr(const char *, const char *);
+// Converting memmem() function to checked version causes unexpected
+// illegal instruction for some test cases. See issue #868
+// (https://github.com/microsoft/checkedc-clang/issues/868)
 void *memmem(const void *, size_t, const void *, size_t);
 // Returns a pointer to the matching byte.
 // Searches backward from the end of the n bytes pointed to by m

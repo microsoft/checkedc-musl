@@ -31,7 +31,6 @@ _Checked{
 		}
 #endif
 #endif
-		
 		for (; n; n--) *d++ = *s++;
 	} else {
 // This part is GCC Specific code and uses unchecked pointer,
