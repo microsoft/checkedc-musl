@@ -18,11 +18,9 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 			if ((*s & 0xc0) != 0xc0) return 0;
 			// At this point s must have length at least 1 (s[0] cannot be 0).
 			// Declare s_widened with widened bounds.
-			_Unchecked {
-				_Nt_array_ptr<const unsigned char> s_widened : count(1) =
-					_Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(s, count(1));
-				s = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
-			}
+			_Nt_array_ptr<const unsigned char> s_widened : count(1) =
+				_Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(s, count(1));
+			s = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
 		}
 		if (!*s) return i;
 		if (s-base >= 0x4000) return 0;
