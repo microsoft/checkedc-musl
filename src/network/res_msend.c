@@ -180,11 +180,11 @@ out:
 }
 
 int __res_msend(int nqueries,
-    const unsigned char *const *queries : itype(_Ptr<_Array_ptr<const unsigned char> const>),
+	const unsigned char *const *queries : itype(_Ptr<_Array_ptr<const unsigned char> const>),
 	const int *qlens : itype(_Ptr<const int>),
-    unsigned char *const *answers : itype(_Ptr<_Array_ptr<unsigned char> const>),
-    int *alens : itype(_Ptr<int>),
-    int asize)
+	unsigned char *const *answers : itype(_Ptr<_Array_ptr<unsigned char> const>),
+	int *alens : itype(_Ptr<int>),
+	int asize)
 {
 	struct resolvconf conf;
 	if (__get_resolv_conf(&conf, 0, 0) < 0) return -1;
