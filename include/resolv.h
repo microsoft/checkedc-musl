@@ -69,8 +69,8 @@ typedef struct __res_state {
 
 struct res_sym {
 	int number;
-	char *name;
-	char *humanname;
+	char *name : itype(_Nt_array_ptr<char>);
+	char *humanname : itype(_Nt_array_ptr<char>);
 };
 
 #define	RES_F_VC	0x00000001
@@ -122,22 +122,50 @@ struct res_sym {
 #define RES_PRF_REPLY	0x00002000
 #define RES_PRF_INIT	0x00004000
 
-struct __res_state *__res_state(void);
+struct __res_state *__res_state(void) : itype(_Ptr<struct __res_state>);
 #define _res (*__res_state())
 
 int res_init(void);
-int res_query(const char *, int, int, unsigned char *, int);
-int res_querydomain(const char *, const char *, int, int, unsigned char *, int);
-int res_search(const char *, int, int, unsigned char *, int);
-int res_mkquery(int, const char *, int, int, const unsigned char *, int, const unsigned char*, unsigned char *, int);
-int res_send(const unsigned char *, int, unsigned char *, int);
-int dn_comp(const char *, unsigned char *, int, unsigned char **, unsigned char **);
-int dn_expand(const unsigned char *base : bounds(base, end) itype(_Nt_array_ptr<const unsigned char>),
+int res_query(const char *name : itype(_Nt_array_ptr<const char>),
+	int class,
+	int type,
+	unsigned char *dest : count(len),
+	int len);
+int res_querydomain(const char *name : itype(_Nt_array_ptr<const char>),
+	const char *domain : itype(_Nt_array_ptr<const char>),
+	int class,
+	int type,
+	unsigned char *dest : count(len),
+	int len);
+int res_search(const char *name : itype(_Nt_array_ptr<const char>),
+	int class,
+	int type,
+	unsigned char *dest : count(len),
+	int len);
+int res_mkquery(int op,
+	const char *dname : itype(_Nt_array_ptr<const char>),
+	int class,
+	int type,
+	const unsigned char *data : count(datalen),
+	int datalen,
+	const unsigned char *newrr : count(0), // newrr is unused.
+	unsigned char *buf : count(buflen),
+	int buflen);
+int res_send(const unsigned char *msg : count(msglen),
+	int msglen,
+	unsigned char *answer : count(anslen),
+	int anslen);
+int dn_comp(const char *src,
+	unsigned char *dst : count(space - 1) itype(_Nt_array_ptr<unsigned char>),
+	int space,
+	unsigned char **dnptrs,
+	unsigned char **lastdnptr);
+int dn_expand(const unsigned char *base : bounds(base, end) itype(_Array_ptr<const unsigned char>),
 	const unsigned char *end : itype(_Ptr<const unsigned char>),
-	const unsigned char *src : bounds(src, end) itype(_Nt_array_ptr<const unsigned char>),
-	char *dest : count(space > 254 ? 254 : space) itype(_Nt_array_ptr<char>),
+	const unsigned char *src : bounds(src, end) itype(_Array_ptr<const unsigned char>),
+	char *dest : count(space > 254 ? 254 : space) itype(_Array_ptr<char>),
 	int space);
-int dn_skipname(const unsigned char *s : bounds(s, end),
+int dn_skipname(const unsigned char *s : bounds(s, end) itype(_Array_ptr<const unsigned char>),
 	const unsigned char *end : itype(_Ptr<const unsigned char>));
 
 #ifdef __cplusplus

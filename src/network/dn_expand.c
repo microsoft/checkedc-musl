@@ -1,17 +1,20 @@
 #include <resolv.h>
 
-_Checked int __dn_expand(const unsigned char *base : bounds(base, end) itype(_Nt_array_ptr<const unsigned char>),
+_Checked int __dn_expand(const unsigned char *base : bounds(base, end) itype(_Array_ptr<const unsigned char>),
 	const unsigned char *end : itype(_Ptr<const unsigned char>),
-	const unsigned char *src : bounds(src, end) itype(_Nt_array_ptr<const unsigned char>),
-	char *dest : count(space > 254 ? 254 : space) itype(_Nt_array_ptr<char>),
+	const unsigned char *src : bounds(src, end) itype(_Array_ptr<const unsigned char>),
+	char *dest : count(space > 254 ? 254 : space) itype(_Array_ptr<char>),
 	int space)
 {
-	_Nt_array_ptr<const unsigned char> p : bounds(src, end) = src;
+	// space0 = MIN(space, 254).
+	int space0 = space > 254 ? 254 : space;
+	_Array_ptr<const unsigned char> p : bounds(src, end) = src;
 	int len = -1, i, j;
 	if (p==end || space <= 0) return -1;
-	_Ptr<const char> dbegin = dest;
-	_Ptr<const char> dend = dest + (space > 254 ? 254 : space);
-	_Nt_array_ptr<char> dst : bounds(dbegin, dend) = dest;
+	const _Array_ptr<const char> dbegin : count(space0) = dest;
+	const _Array_ptr<const char> dend : count(0) = dest + space0;
+	// dst loops through bounds(dbegin, dend).
+	_Array_ptr<char> dst : bounds(dbegin, dend) = dest;
 	/* detect reference loop using an iteration counter */
 	for (i=0; i < end-base; i+=2) {
 		/* loop invariants: p<end, dst<dend */

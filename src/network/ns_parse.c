@@ -114,7 +114,7 @@ bad:
 	return -1;
 }
 
-int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
+_Checked int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	ns_sect section,
 	int rrnum,
 	ns_rr *rr : itype(_Ptr<ns_rr>))
@@ -125,13 +125,20 @@ int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	if (section != handle->_sect) {
 		handle->_sect = section;
 		handle->_rrnum = 0;
-		handle->_msg_ptr = handle->_sections[section];
+		// The assignment is not allowed in a checked scope. RHS has unknown bounds.
+		//  We cannot declare bounds for RHS. See the comments in nameser.h.
+		_Unchecked {
+			handle->_msg_ptr = handle->_sections[section];
+		}
 	}
 	if (rrnum == -1) rrnum = handle->_rrnum;
 	if (rrnum < 0 || rrnum >= handle->_counts[section]) goto bad;
 	if (rrnum < handle->_rrnum) {
 		handle->_rrnum = 0;
-		handle->_msg_ptr = handle->_sections[section];
+		// The assignment is not allowed in a checked scope. RHS has unknown bounds.
+		_Unchecked {
+			handle->_msg_ptr = handle->_sections[section];
+		}
 	}
 	// _Array_ptr<const unsigned char> msg_ptr : bounds(msg_ptr, handle->_eom) =
 	// 	_Assume_bounds_cast<_Array_ptr<const unsigned char>>(handle->_msg_ptr, bounds(msg_ptr, handle->_eom));
@@ -178,10 +185,10 @@ size:
 	return -1;
 }
 
-int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
+_Checked int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
-	char *dst : count(dstsiz) itype(_Nt_array_ptr<char>),
+	char *dst : count(dstsiz) itype(_Array_ptr<char>),
 	size_t dstsiz)
 {
 	int r;
