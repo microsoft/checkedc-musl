@@ -6,8 +6,7 @@ _Checked int __dn_expand(const unsigned char *base : bounds(base, end) itype(_Ar
 	char *dest : count(space > 254 ? 254 : space) itype(_Array_ptr<char>),
 	int space)
 {
-	// space0 = MIN(space, 254).
-	int space0 = space > 254 ? 254 : space;
+	const int space0 = space > 254 ? 254 : space;
 	_Array_ptr<const unsigned char> p : bounds(src, end) = src;
 	int len = -1, i, j;
 	if (p==end || space <= 0) return -1;

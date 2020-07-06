@@ -140,8 +140,6 @@ _Checked int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 			handle->_msg_ptr = handle->_sections[section];
 		}
 	}
-	// _Array_ptr<const unsigned char> msg_ptr : bounds(msg_ptr, handle->_eom) =
-	// 	_Assume_bounds_cast<_Array_ptr<const unsigned char>>(handle->_msg_ptr, bounds(msg_ptr, handle->_eom));
 	if (rrnum > handle->_rrnum) {
 		r = ns_skiprr(handle->_msg_ptr, handle->_eom, section, rrnum - handle->_rrnum);
 		if (r < 0) return -1;
