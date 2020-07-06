@@ -328,7 +328,7 @@ int ns_initparse(const unsigned char *msg : count(len) itype(_Array_ptr<const un
 	ns_msg *handle : itype(_Ptr<ns_msg>));
 
 // ns_parserr extracts information about a response record pointed by handle and stores it
-// in rr, which is a parameter passed to other name server libarary routines.
+// in rr, which is a parameter passed to other name server library routines.
 int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	ns_sect section,
 	int rrnum,
@@ -345,7 +345,7 @@ int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
-	char *dst : count(dst_size - 1) itype(_Nt_array_ptr<char>),
+	char *dst : count(dst_size) itype(_Nt_array_ptr<char>),
 	size_t dst_size);
 
 
