@@ -155,11 +155,11 @@ int res_send(const unsigned char *msg : count(msglen),
 	int msglen,
 	unsigned char *answer : count(anslen),
 	int anslen);
-int dn_comp(const char *src,
+int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	unsigned char *dst : count(space - 1) itype(_Nt_array_ptr<unsigned char>),
 	int space,
-	unsigned char **dnptrs,
-	unsigned char **lastdnptr);
+	unsigned char **dnptrs : bounds(dnptrs, lastdnptr) itype(_Array_ptr<_Nt_array_ptr<unsigned char>>),
+	unsigned char **lastdnptr : count(0) itype(_Array_ptr<_Nt_array_ptr<unsigned char>>));
 int dn_expand(const unsigned char *base : bounds(base, end) itype(_Array_ptr<const unsigned char>),
 	const unsigned char *end : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, end) itype(_Array_ptr<const unsigned char>),
