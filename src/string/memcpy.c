@@ -124,6 +124,7 @@ _Checked
 	return dest;
 #endif
 #endif
+
 	for (; n; n--) *d++ = *s++;
 	return dest;
 }
