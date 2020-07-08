@@ -10,6 +10,7 @@
 // getoffs labels start offsets of a compressed domain name s relative to base, which is
 // the start of the domain name lists. The offsets are stored in the buffer offs with a
 // max length of 128. Returns the size of offs actually used.
+// Null-terminated strings base and s initially have unknown size, i.e., count(0).
 static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated in match.
 	_Nt_array_ptr<const unsigned char> base,
 	_Nt_array_ptr<const unsigned char> s)
@@ -18,6 +19,7 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 	for (;;) {
 		while (*s & 0xc0) {
 			if ((*s & 0xc0) != 0xc0) return 0;
+
 			// (*s & 0xc0) != 0 implies *s != 0. So we can widen the bounds of s.
 			// Manually widen the bounds for now. The compiler cannot figure it out yet.
 			_Nt_array_ptr<const unsigned char> s_widened : count(1) =
@@ -25,7 +27,9 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 			// Decode offset and calculate the start position of the compressed domain name.
 			s = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
 		}
+		// s reaches the end of the domain name.
 		if (!*s) return i;
+
 		if (s-base >= 0x4000) return 0;
 		offs[i++] = s-base;
 		// Move to the next component.
@@ -49,10 +53,11 @@ static int getlens(_Array_ptr<unsigned char> lens : count(127), // Fixed-size, a
 	}
 }
 
-// match matches the longest suffix of an ascii domain with a compressed domain name dn. Returns
-// the length of the common suffix and store the offset.
-// base and dn initially have count(0) prefixes. end points to the end of the unmatched part of the
-// domain name src.
+// match matches the longest suffix of an ascii domain with a compressed domain name dn.
+// Returns the length of the common suffix and store the offset.
+// base and dn initially have count(0) prefixes. end points to the end of the unmatched
+// part of the domain name src. The bounds of end are not passed as parameters but recovered
+// indirectly from lens.
 static int match(_Ptr<int> offset,
 	_Nt_array_ptr<const unsigned char> base,
 	_Nt_array_ptr<const unsigned char> dn,

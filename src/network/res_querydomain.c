@@ -5,7 +5,7 @@ _Checked int res_querydomain(const char *name : itype(_Nt_array_ptr<const char>)
 	const char *domain : itype(_Nt_array_ptr<const char>),
 	int class,
 	int type,
-	unsigned char *dest : count(len) itype(_Array_ptr<unsigned char>),
+	unsigned char *dest : count(len),
 	int len)
 {
 	char tmp _Nt_checked[255];

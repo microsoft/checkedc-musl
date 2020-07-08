@@ -3,10 +3,10 @@
 
 #include "../../include/resolv.h"
 
-hidden int __dn_expand(const unsigned char *base : bounds(base, end) itype(_Array_ptr<const unsigned char>),
+hidden int __dn_expand(const unsigned char *base : bounds(base, end),
     const unsigned char *end : itype(_Ptr<const unsigned char>),
-    const unsigned char *src : bounds(src, end) itype(_Array_ptr<const unsigned char>),
-    char *dest : count(space > 254 ? 254 : space) itype(_Array_ptr<char>),
+    const unsigned char *src : bounds(src, end),
+    char *dest : count(space > 254 ? 254 : space),
     int space);
 
 hidden int __res_mkquery(int op,
@@ -23,10 +23,10 @@ hidden int __res_send(const unsigned char *msg : count(msglen),
 	unsigned char *answer : count(anslen),
 	int anslen);
 hidden int __res_msend(int nqueries,
-    const unsigned char *const *queries : itype(_Ptr<_Array_ptr<const unsigned char> const>),
+	const unsigned char *const *queries : itype(_Ptr<_Array_ptr<const unsigned char> const>),
 	const int *qlens : itype(_Ptr<const int>),
-    unsigned char *const *answers : itype(_Ptr<_Array_ptr<unsigned char> const>),
-    int *alens : itype(_Ptr<int>),
-    int asize);
+	unsigned char *const *answers : itype(_Ptr<_Array_ptr<unsigned char> const>),
+	int *alens : itype(_Ptr<int>),
+	int asize);
 
 #endif
