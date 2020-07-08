@@ -39,8 +39,8 @@ typedef enum __ns_sect {
 typedef struct __ns_msg {
 	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(_Ptr<const unsigned char>);
 	uint16_t _id, _flags, _counts[ns_s_max] : itype(uint16_t _Nt_checked[ns_s_max]);
-	// _sections is a fixed-length array of _Array_ptr<const unsigned char>. The inner _Array_ptr has
-	// bounds(_msg_ptr, _eom). But we cannot specify bounds for the an array in Checked C yet.
+	// _sections is a fixed-size array of _Array_ptr<const unsigned char>. The inner _Array_ptr has
+	// bounds(_msg_ptr, _eom). But we cannot specify bounds for an inner array in Checked C yet.
 	// See github.com/microsoft/checkedc/issues/173 for a related proposal.
 	const unsigned char *_sections[ns_s_max] : itype(_Array_ptr<const unsigned char> _Checked[ns_s_max]);
 	ns_sect _sect;

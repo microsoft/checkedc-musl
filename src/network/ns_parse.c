@@ -125,8 +125,8 @@ _Checked int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	if (section != handle->_sect) {
 		handle->_sect = section;
 		handle->_rrnum = 0;
-		// The assignment is not allowed in a checked scope. RHS has unknown bounds.
-		//  We cannot declare bounds for RHS. See the comments in nameser.h.
+		// The assignment is not allowed in a checked scope because RHS has unknown bounds. We cannot declare
+		// bounds for RHS currently in Checked C. See the comments in nameser.h.
 		_Unchecked {
 			handle->_msg_ptr = handle->_sections[section];
 		}
@@ -135,7 +135,8 @@ _Checked int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	if (rrnum < 0 || rrnum >= handle->_counts[section]) goto bad;
 	if (rrnum < handle->_rrnum) {
 		handle->_rrnum = 0;
-		// The assignment is not allowed in a checked scope. RHS has unknown bounds.
+		// The assignment is not allowed in a checked scope because RHS has unknown bounds. We cannot declare
+		// bounds for RHS currently in Checked C. See the comments in nameser.h.
 		_Unchecked {
 			handle->_msg_ptr = handle->_sections[section];
 		}
