@@ -23,7 +23,7 @@ extern "C" {
 #include <bits/alltypes.h>
 
 // Returns a pointer to dest.
-// Copies n bytes form src to the memory region dest points to.
+// Copies n bytes from src to the memory region dest points to.
 void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
               const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
               size_t n)
