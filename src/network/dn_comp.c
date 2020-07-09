@@ -57,11 +57,12 @@ static int getlens(_Array_ptr<unsigned char> lens : count(127), // Fixed-size, a
 // Returns the length of the common suffix and store the offset.
 // base and dn initially have count(0) prefixes. end points to the end of the unmatched
 // part of the domain name src. The bounds of end are not passed as parameters but recovered
-// indirectly from lens.
+// indirectly from lens. Add parameter src to recover bounds information for end.
 static int match(_Ptr<int> offset,
 	_Nt_array_ptr<const unsigned char> base,
 	_Nt_array_ptr<const unsigned char> dn,
-	_Array_ptr<const char> end,
+	_Array_ptr<const char> src : bounds(src, end),
+	_Array_ptr<const char> end : bounds(src, end),
 	_Array_ptr<const unsigned char> lens : count(nlen),
 	int nlen)
 {
@@ -74,12 +75,10 @@ static int match(_Ptr<int> offset,
 		l = lens[--nlen];
 		o = offs[--noff];
 		end -= l;
-		// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
-		_Unchecked {
-			// Compare the suffixes. Return if not match.
-			if (l != base[o] || memcmp((void *)base+o+1, (void *)end, l))
-				return m;
-		}
+		// Compare the suffixes. Return if not match.
+		if (l != base[o] || memcmp(base+o+1, end, l))
+			return m;
+
 		// We matched one component. Save offset and continue to the next.
 		*offset = o;
 		m += l;
@@ -113,14 +112,14 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 		*dst = 0;
 		return 1;
 	}
-	_Array_ptr<const char> end = src+l;
+	_Array_ptr<const char> end : count(src, end) = src + l;
 	n = getlens(lens, src, l);
 	// Invariant: l = sum(lens) + n,
 	if (!n) return -1;
 
 	_Array_ptr<_Nt_array_ptr<unsigned char>> p : bounds(dnptrs, lastdnptr) = dnptrs;
 	if (p && *p) for (p++; *p; p++) {
-		m = match(&offset, *dnptrs, *p, end, lens, n);
+		m = match(&offset, *dnptrs, *p, src, end, lens, n);
 		if (m > bestlen) {
 			bestlen = m;
 			bestoff = offset;
@@ -131,10 +130,7 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 
 	/* encode unmatched part */
 	if (space < l-bestlen+2+(bestlen-1 < l-1)) return -1;
-	// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
-	_Unchecked {
-		memcpy(dst+1, src, l-bestlen);
-	}
+	memcpy(dst+1, src, l-bestlen);
 	for (i=j=0; i<l-bestlen; i+=lens[j++]+1)
 		dst[i] = lens[j];
 

@@ -28,17 +28,11 @@ _Checked int __res_mkquery(int op,
 		return -1;
 
 	/* Construct query template - ID will be filled later */
-	// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
-	_Unchecked {
-		memset((void *)q, 0, n);
-	}
+	memset(q, 0, n);
 	q[2] = op*8 + 1;
 	q[3] = 32; /* AD */
 	q[5] = 1;
-	// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
-	_Unchecked {
-		memcpy((char *)q+13, dname, l);
-	}
+	memcpy(q+13, dname, l);
 	for (i=13; q[i]; i=j+1) {
 		for (j=i; q[j] && q[j] != '.'; j++);
 		if (j-i-1u > 62u) return -1;
@@ -55,10 +49,7 @@ _Checked int __res_mkquery(int op,
 	id = ts.tv_nsec + ts.tv_nsec/65536UL & 0xffff;
 	q[0] = id/256;
 	q[1] = id;
-	// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
-	_Unchecked {
-		memcpy(buf, (void *)q, n);
-	}
+	memcpy(buf, q, n);
 	return n;
 }
 
