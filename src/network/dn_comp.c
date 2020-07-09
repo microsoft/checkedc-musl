@@ -16,20 +16,21 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 	_Nt_array_ptr<const unsigned char> s)
 {
 	int i=0;
+	_Nt_array_ptr<const unsigned char> s_widened : count(1) = 0;
 	for (;;) {
 		while (*s & 0xc0) {
 			if ((*s & 0xc0) != 0xc0) return 0;
 
 			// (*s & 0xc0) != 0 implies *s != 0. So we can widen the bounds of s.
 			// Manually widen the bounds for now. The compiler cannot figure it out yet.
-			_Nt_array_ptr<const unsigned char> s_widened : count(1) =
-				_Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(s, count(1));
+			_Unchecked {
+				s_widened = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(s, count(1));
+			}
 			// Decode offset and calculate the start position of the compressed domain name.
 			s = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
 		}
 		// s reaches the end of the domain name.
 		if (!*s) return i;
-
 		if (s-base >= 0x4000) return 0;
 		offs[i++] = s-base;
 		// Move to the next component.
@@ -41,7 +42,7 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 // The lengths are stored in lens of a max size of 127. Returns the actual size of lens.
 static int getlens(_Array_ptr<unsigned char> lens : count(127), // Fixed-size, allocated in dn_comp.
 	_Array_ptr<const char> s : count(l),
-	int l)
+	size_t l)
 {
 	int i=0,j=0,k=0;
 	for (;;) {
@@ -64,33 +65,42 @@ static int match(_Ptr<int> offset,
 	_Array_ptr<const char> src : bounds(src, end),
 	_Array_ptr<const char> end : bounds(src, end),
 	_Array_ptr<const unsigned char> lens : count(nlen),
-	int nlen)
+	const int nlen)
 {
 	int l, o, m=0;
 	short offs _Checked[128];
 	int noff = getoffs(offs, base, dn);
 	if (!noff) return 0;
+
 	// Start from the end of the input domain name (src in dn_comp).
+	// Don't decrement nlen and access lens[nlen] at the same time because
+	// lens has count(nlen). Use a temporary ilen instead.
+	int ilen = nlen;
 	for (;;) {
-		l = lens[--nlen];
+		l = lens[--ilen];
 		o = offs[--noff];
+		// Widen base using the offset o plus 1, since the first byte of base encodes the length.
+		_Nt_array_ptr<const unsigned char> base_widened : count(o + l + 1) = 0;
+		_Unchecked {
+			base_widened = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(base, count(o + l + 1));
+		}
 		end -= l;
 		// Compare the suffixes. Return if not match.
-		if (l != base[o] || memcmp(base+o+1, end, l))
+		if (l != base_widened[o] || memcmp(base_widened+o+1, end, l))
 			return m;
 
 		// We matched one component. Save offset and continue to the next.
 		*offset = o;
 		m += l;
-		if (nlen) m++;
-		if (!nlen || !noff) return m;
+		if (ilen) m++;
+		if (!ilen || !noff) return m;
 		end--;
 	}
 }
 
 // dn_comp compresses the domain name src and stores it in the buffer dst of length space. The
 // compresssion uses an array of pointers dnptrs to previously compressed names in the current
-// message. The first pointer points to the beggining of the message and the list ends with NULL.
+// message. The first pointer points to the beginning of the message and the list ends with NULL.
 // The limit of the array is specified with lastdnptr. If dnptrs is NULL, domain names are not
 // compressed. If lastdnptr is NULL, the list of labels is not updated.
 int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
@@ -102,24 +112,26 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	int i, j, n, m=0, offset, bestlen=0, bestoff;
 	unsigned char lens _Checked[127];
 	size_t l;
+	_Nt_array_ptr<const char> src_l : count(l) = 0;
 	// TODO(yahsun): remove the unchecked scope once the str* functions are annotated with bounds-safe interfaces.
 	_Unchecked {
 		l = strnlen(src, 255);
+		src_l = _Assume_bounds_cast<_Nt_array_ptr<const char>>(src, count(l));
 	}
-	if (l && src[l-1] == '.') l--;
+	if (l && src_l[l-1] == '.') l--;
 	if (l>253 || space<=0) return -1;
 	if (!l) {
 		*dst = 0;
 		return 1;
 	}
-	_Array_ptr<const char> end : bounds(src, end) = src + l;
-	n = getlens(lens, src, l);
+	_Array_ptr<const char> end : bounds(src_l, end) = src_l + l;
+	n = getlens(lens, src_l, l);
 	// Invariant: l = sum(lens) + n.
 	if (!n) return -1;
 
-	_Array_ptr<_Nt_array_ptr<unsigned char>> p : bounds(dnptrs, lastdnptr) = dnptrs;
+	_Array_ptr<_Nt_array_ptr<unsigned char>> p : bounds(p, lastdnptr) = dnptrs;
 	if (p && *p) for (p++; *p; p++) {
-		m = match(&offset, *dnptrs, *p, src, end, lens, n);
+		m = match(&offset, *dnptrs, *p, src_l, end, lens, n);
 		if (m > bestlen) {
 			bestlen = m;
 			bestoff = offset;
@@ -130,7 +142,7 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 
 	/* encode unmatched part */
 	if (space < l-bestlen+2+(bestlen-1 < l-1)) return -1;
-	memcpy(dst+1, src, l-bestlen);
+	memcpy(dst+1, src_l, l-bestlen);
 	for (i=j=0; i<l-bestlen; i+=lens[j++]+1)
 		dst[i] = lens[j];
 
