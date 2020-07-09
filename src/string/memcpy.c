@@ -2,13 +2,19 @@
 #include <stdint.h>
 #include <endian.h>
 
-void *memcpy(void *restrict dest, const void *restrict src, size_t n)
+void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
+              const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
+              size_t n)
+  : itype(_Array_ptr<void>) byte_count(n)
+_Checked
 {
-	unsigned char *d = dest;
-	const unsigned char *s = src;
+        _Array_ptr<unsigned char> d : count(n) = dest;
+        _Array_ptr<const unsigned char> s : count(n) = src;
 
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
-
+#ifndef __clang__
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define LS >>
 #define RS <<
@@ -16,7 +22,6 @@ void *memcpy(void *restrict dest, const void *restrict src, size_t n)
 #define LS <<
 #define RS >>
 #endif
-
 	typedef uint32_t __attribute__((__may_alias__)) u32;
 	uint32_t w, x;
 
@@ -117,6 +122,7 @@ void *memcpy(void *restrict dest, const void *restrict src, size_t n)
 		*d = *s;
 	}
 	return dest;
+#endif
 #endif
 
 	for (; n; n--) *d++ = *s++;

@@ -1,9 +1,13 @@
 #include <string.h>
 #include <stdint.h>
 
-void *memset(void *dest, int c, size_t n)
+void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n),
+              int c,
+              size_t n)
+  : byte_count(n)
+_Checked
 {
-	unsigned char *s = dest;
+	_Array_ptr<unsigned char> s : count(n) = dest;
 	size_t k;
 
 	/* Fill head and tail with minimal branching. Each
@@ -33,7 +37,10 @@ void *memset(void *dest, int c, size_t n)
 	n -= k;
 	n &= -4;
 
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
+#ifndef __clang__
 	typedef uint32_t __attribute__((__may_alias__)) u32;
 	typedef uint64_t __attribute__((__may_alias__)) u64;
 
@@ -81,6 +88,7 @@ void *memset(void *dest, int c, size_t n)
 		*(u64 *)(s+16) = c64;
 		*(u64 *)(s+24) = c64;
 	}
+#endif
 #else
 	/* Pure C fallback with no aliasing violations. */
 	for (; n; n--, s++) *s = c;
