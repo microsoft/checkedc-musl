@@ -112,7 +112,7 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 		*dst = 0;
 		return 1;
 	}
-	_Array_ptr<const char> end : count(src, end) = src + l;
+	_Array_ptr<const char> end : bounds(src, end) = src + l;
 	n = getlens(lens, src, l);
 	// Invariant: l = sum(lens) + n.
 	if (!n) return -1;
