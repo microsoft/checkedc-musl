@@ -8,11 +8,19 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-void *memchr(const void *src, int c, size_t n)
+void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n),
+              int c,
+              size_t n)
+  : itype(_Array_ptr<void>) byte_count(n)
+_Checked
 {
-	const unsigned char *s = src;
+	_Array_ptr<const unsigned char> s : count(n) = (_Array_ptr<const unsigned char>) src;
 	c = (unsigned char)c;
+
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
+#ifndef __clang__
 	for (; ((uintptr_t)s & ALIGN) && n && *s != c; s++, n--);
 	if (n && *s != c) {
 		typedef size_t __attribute__((__may_alias__)) word;
@@ -22,6 +30,7 @@ void *memchr(const void *src, int c, size_t n)
 		s = (const void *)w;
 	}
 #endif
+#endif
 	for (; n && *s != c; s++, n--);
-	return n ? (void *)s : 0;
+	return n ? (_Array_ptr<void>) s : 0;
 }
