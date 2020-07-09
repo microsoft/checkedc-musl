@@ -15,7 +15,7 @@ _Checked int __res_mkquery(int op,
 	int id, i, j;
 	unsigned char q _Checked[280];
 	struct timespec ts;
-	// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
+	// TODO(yahsun): remove the unchecked scope once the str* functions are annotated with bounds-safe interfaces.
 	size_t l;
 	_Unchecked {
 		l = strnlen(dname, 255);

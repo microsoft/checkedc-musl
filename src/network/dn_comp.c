@@ -102,7 +102,7 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	int i, j, n, m=0, offset, bestlen=0, bestoff;
 	unsigned char lens _Checked[127];
 	size_t l;
-	// TODO(yahsun): remove the unchecked scope once the str* and mem* functions are annotated with bounds-safe interfaces.
+	// TODO(yahsun): remove the unchecked scope once the str* functions are annotated with bounds-safe interfaces.
 	_Unchecked {
 		l = strnlen(src, 255);
 	}
@@ -114,7 +114,7 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	}
 	_Array_ptr<const char> end : count(src, end) = src + l;
 	n = getlens(lens, src, l);
-	// Invariant: l = sum(lens) + n,
+	// Invariant: l = sum(lens) + n.
 	if (!n) return -1;
 
 	_Array_ptr<_Nt_array_ptr<unsigned char>> p : bounds(dnptrs, lastdnptr) = dnptrs;
