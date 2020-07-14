@@ -7,9 +7,15 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-char *__stpncpy(char *restrict d, const char *restrict s, size_t n)
-{
+char *__stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n),
+                const char *restrict s : itype(restrict _Nt_array_ptr<const char>) count(n),
+                size_t n)
+  :itype(_Nt_array_ptr<char>) count(n)
+_Checked{
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
+#ifndef __clang__
 	typedef size_t __attribute__((__may_alias__)) word;
 	word *wd;
 	const word *ws;
@@ -21,6 +27,7 @@ char *__stpncpy(char *restrict d, const char *restrict s, size_t n)
 		       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
 		d=(void *)wd; s=(const void *)ws;
 	}
+#endif
 #endif
 	for (; n && (*d=*s); n--, s++, d++);
 tail:
