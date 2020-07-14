@@ -23,7 +23,7 @@ extern "C" {
 #include <bits/alltypes.h>
 
 // Returns a pointer to dest.
-// Copies n bytes from src to the memory region dest points to.
+// Copies n bytes form src to the memory region dest points to.
 void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
               const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
               size_t n)
@@ -49,8 +49,7 @@ int memcmp (const void * : itype(_Array_ptr<const void>) byte_count(n),
 void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n),
               int c,
               size_t n)
-  : itype(_Array_ptr<void>) byte_count(n);
-
+  : bounds(src, (_Array_ptr<char>) src + n);
 char *strcpy (char *__restrict, const char *__restrict);
 char *strncpy (char *__restrict, const char *__restrict, size_t);
 
@@ -86,8 +85,14 @@ char *strerror (int);
 char *strtok_r (char *__restrict, const char *__restrict, char **__restrict);
 int strerror_r (int, char *, size_t);
 char *stpcpy(char *__restrict, const char *__restrict);
-char *stpncpy(char *__restrict, const char *__restrict, size_t);
-size_t strnlen (const char *, size_t);
+// Copies at most n characters from the string pointed to by src, including the terminating null byte ('\0'),
+// to the array pointed to by dest.
+char *stpncpy(char *__restrict d : itype(__restrict _Nt_array_ptr<char>) count(n),
+              const char *restrict s : itype(__restrict _Nt_array_ptr<const char>) count(n),
+              size_t n)
+  : itype(_Nt_array_ptr<char>) count(n);
+// Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
+size_t strnlen (const char * : itype(_Nt_array_ptr<const char>) count(n), size_t n);
 char *strdup (const char *);
 char *strndup (const char *, size_t);
 char *strsignal(int);
@@ -111,7 +116,9 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
 char *strsep(char **, const char *);
 size_t strlcat (char *, const char *, size_t);
 size_t strlcpy (char *, const char *, size_t);
-void explicit_bzero (void *, size_t);
+// Places n zero-valued bytes in the area pointed to by s.
+// Will not be removed by a compiler's dead store optimization pass
+void explicit_bzero(void *d : itype(_Array_ptr<void>) byte_count(n), size_t n);
 #endif
 
 #ifdef _GNU_SOURCE
