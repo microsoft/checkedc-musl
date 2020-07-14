@@ -3,8 +3,11 @@
 #include <limits.h>
 #include <errno.h>
 #include "syscall.h"
+#pragma CHECKED_SCOPE on
 
-int sendmmsg(int fd, struct mmsghdr *msgvec, unsigned int vlen, unsigned int flags)
+int sendmmsg(int fd,
+	struct mmsghdr *msgvec : count(vlen),
+	unsigned int vlen, unsigned int flags)
 {
 #if LONG_MAX > INT_MAX
 	/* Can't use the syscall directly because the kernel has the wrong

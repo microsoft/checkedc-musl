@@ -2,8 +2,10 @@
 #include <fcntl.h>
 #include <errno.h>
 #include "syscall.h"
+#pragma CHECKED_SCOPE on
 
-int socketpair(int domain, int type, int protocol, int fd[2])
+int socketpair(int domain, int type, int protocol,
+	int fd[2] : itype(int _Checked[2]))
 {
 	int r = socketcall(socketpair, domain, type, protocol, fd, 0, 0);
 	if (r<0 && (errno==EINVAL || errno==EPROTONOSUPPORT)

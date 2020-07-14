@@ -4,11 +4,14 @@
 #include <errno.h>
 #include "syscall.h"
 
-ssize_t sendmsg(int fd, const struct msghdr *msg, int flags)
+ssize_t sendmsg(int fd,
+	const struct msghdr *msg : itype(_Ptr<const struct msghdr>),
+	int flags)
 {
 #if LONG_MAX > INT_MAX
-	struct msghdr h;
-	struct cmsghdr chbuf[1024/sizeof(struct cmsghdr)+1], *c;
+	struct msghdr h = {};
+	struct cmsghdr chbuf _Checked[1024/sizeof(struct cmsghdr)+1];
+	_Ptr<struct cmsghdr> c = 0;
 	if (msg) {
 		h = *msg;
 		h.__pad1 = h.__pad2 = 0;

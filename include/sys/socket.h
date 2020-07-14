@@ -20,9 +20,9 @@ extern "C" {
 #include <bits/socket.h>
 
 struct msghdr {
-	void *msg_name;
+	void *msg_name : byte_count(msg_namelen);
 	socklen_t msg_namelen;
-	struct iovec *msg_iov;
+	struct iovec *msg_iov : itype(_Ptr<struct iovec>);
 #if __LONG_MAX > 0x7fffffff && __BYTE_ORDER == __BIG_ENDIAN
 	int __pad1;
 #endif
@@ -30,7 +30,7 @@ struct msghdr {
 #if __LONG_MAX > 0x7fffffff && __BYTE_ORDER == __LITTLE_ENDIAN
 	int __pad1;
 #endif
-	void *msg_control;
+	void *msg_control : byte_count(msg_controllen);
 #if __LONG_MAX > 0x7fffffff && __BYTE_ORDER == __BIG_ENDIAN
 	int __pad2;
 #endif
@@ -67,8 +67,13 @@ struct mmsghdr {
 
 struct timespec;
 
-int sendmmsg (int, struct mmsghdr *, unsigned int, unsigned int);
-int recvmmsg (int, struct mmsghdr *, unsigned int, unsigned int, struct timespec *);
+int sendmmsg(int fd,
+	struct mmsghdr *msgvec : count(vlen),
+	unsigned int vlen, unsigned int flags);
+int recvmmsg(int fd,
+	struct mmsghdr *msgvec : count(vlen),
+	unsigned int vlen, unsigned int flags,
+	struct timespec *timeout : itype(_Ptr<struct timespec>));
 #endif
 
 struct linger {
@@ -366,12 +371,12 @@ struct linger {
 
 struct sockaddr {
 	sa_family_t sa_family;
-	char sa_data[14];
+	char sa_data _Checked[14];
 };
 
 struct sockaddr_storage {
 	sa_family_t ss_family;
-	char __ss_padding[128-sizeof(long)-sizeof(sa_family_t)];
+	char __ss_padding _Checked[128-sizeof(long)-sizeof(sa_family_t)];
 	unsigned long __ss_align;
 };
 
@@ -379,25 +384,61 @@ int socket (int, int, int);
 int socketpair (int, int, int, int [2]);
 
 int shutdown (int, int);
-
-int bind (int, const struct sockaddr *, socklen_t);
-int connect (int, const struct sockaddr *, socklen_t);
+int bind(int fd,
+	const struct sockaddr *addr : byte_count(len),
+	socklen_t len);
+int socketpair(int domain, int type, int protocol,
+	int fd[2] : itype(int _Checked[2]));
+int connect(int fd,
+	const struct sockaddr *addr : byte_count(len),
+	socklen_t len);
 int listen (int, int);
-int accept (int, struct sockaddr *__restrict, socklen_t *__restrict);
-int accept4(int, struct sockaddr *__restrict, socklen_t *__restrict, int);
+int accept(int fd,
+	struct sockaddr *restrict addr : byte_count(*len),
+	socklen_t *restrict len : itype(restrict _Ptr<socklen_t>));
+int accept4(int fd,
+	struct sockaddr *restrict addr : byte_count(*len),
+	socklen_t *restrict len : itype(restrict _Ptr<socklen_t>),
+	int flg);
 
-int getsockname (int, struct sockaddr *__restrict, socklen_t *__restrict);
-int getpeername (int, struct sockaddr *__restrict, socklen_t *__restrict);
+int getsockname(int fd,
+	struct sockaddr *restrict addr : byte_count(*len),
+	socklen_t *restrict len : itype(restrict _Ptr<socklen_t>));
+int getpeername(int fd,
+	struct sockaddr *restrict addr : byte_count(*len),
+	socklen_t *restrict len : itype(restrict _Ptr<socklen_t>));
 
-ssize_t send (int, const void *, size_t, int);
-ssize_t recv (int, void *, size_t, int);
-ssize_t sendto (int, const void *, size_t, int, const struct sockaddr *, socklen_t);
-ssize_t recvfrom (int, void *__restrict, size_t, int, struct sockaddr *__restrict, socklen_t *__restrict);
-ssize_t sendmsg (int, const struct msghdr *, int);
-ssize_t recvmsg (int, struct msghdr *, int);
+ssize_t send(int fd,
+	const void *buf : byte_count(len),
+	size_t len, int flags);
+ssize_t recv(int fd,
+	void *buf : byte_count(len),
+	size_t len, int flags);
+ssize_t sendto(int fd,
+	const void *buf : byte_count(len),
+	size_t len,
+	int flags,
+	const struct sockaddr *addr : byte_count(alen),
+	socklen_t alen);
+ssize_t recvfrom(int fd,
+	void *restrict buf : byte_count(len),
+	size_t len,
+	int flags,
+	struct sockaddr *restrict addr : byte_count(*alen),
+	socklen_t *restrict alen : itype(restrict _Ptr<socklen_t>));
+ssize_t sendmsg(int fd,
+	const struct msghdr *msg : itype(_Ptr<const struct msghdr>),
+	int flags);
+ssize_t recvmsg(int fd,
+	struct msghdr *msg : itype(_Ptr<struct msghdr>),
+	int flags);
 
-int getsockopt (int, int, int, void *__restrict, socklen_t *__restrict);
-int setsockopt (int, int, int, const void *, socklen_t);
+int getsockopt(int fd, int level, int optname,
+	void *restrict optval : byte_count(*optlen),
+	socklen_t *restrict optlen: itype(restrict _Ptr<socklen_t>));
+int setsockopt(int fd, int level, int optname,
+	const void *optval : byte_count(optlen),
+	socklen_t optlen);
 
 int sockatmark (int);
 
