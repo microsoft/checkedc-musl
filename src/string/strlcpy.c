@@ -8,13 +8,19 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-size_t strlcpy(char *d, const char *s, size_t n)
-{
-	char *d0 = d;
-	size_t *wd;
+size_t strlcpy(char *d : itype(_Nt_array_ptr<char>) count(n),
+               const char *s : itype(_Nt_array_ptr<const char>) count(n),
+               size_t n)
+_Checked{
+	_Nt_array_ptr<char> d0 : count(n) = d;
+// Is not compiled by checkedc compiler
+	_Unchecked{size_t *wd;}
 
 	if (!n--) goto finish;
+// This part is GCC Specific code and uses unchecked pointer,
+// Clang compiler should not compile this part.
 #ifdef __GNUC__
+#ifndef __clang__
 	typedef size_t __attribute__((__may_alias__)) word;
 	const word *ws;
 	if (((uintptr_t)s & ALIGN) == ((uintptr_t)d & ALIGN)) {
@@ -27,8 +33,11 @@ size_t strlcpy(char *d, const char *s, size_t n)
 		}
 	}
 #endif
+#endif
 	for (; n && (*d=*s); n--, s++, d++);
 	*d = 0;
 finish:
-	return d-d0 + strlen(s);
+// The unchecked scope will be removed when the compiler has support
+// to convert strlen function
+	_Unchecked{return d-d0 + strlen(s);}
 }

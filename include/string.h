@@ -114,8 +114,17 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 char *strsep(char **, const char *);
-size_t strlcat (char *, const char *, size_t);
-size_t strlcpy (char *, const char *, size_t);
+//size_t strlcat (char *, const char *, size_t);
+// Appends the NUL-terminated string s to the end of d.
+// It will append at most n - strlen(dst) - 1 bytes, NUL-terminating the result.
+size_t strlcat(char *d : itype(_Nt_array_ptr<char>) count(n),
+               const char *s : itype(_Nt_array_ptr<const char>) count(n),
+               size_t n);
+// Copies up to size - 1 characters from the NUL-terminated string s to d,
+// NUL-terminating the result.
+size_t strlcpy(char *d : itype(_Nt_array_ptr<char>) count(n),
+               const char *s : itype(_Nt_array_ptr<const char>) count(n),
+               size_t n);
 // Places n zero-valued bytes in the area pointed to by s.
 // Will not be removed by a compiler's dead store optimization pass
 void explicit_bzero(void *d : itype(_Array_ptr<void>) byte_count(n), size_t n);
