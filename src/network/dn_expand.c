@@ -1,15 +1,22 @@
 #include <resolv.h>
 
-int __dn_expand(const unsigned char *base, const unsigned char *end, const unsigned char *src, char *dest, int space)
+_Checked int __dn_expand(const unsigned char *base : bounds(base, end),
+	const unsigned char *end : itype(_Ptr<const unsigned char>),
+	const unsigned char *src : bounds(src, end),
+	char *dest : count(space > 254 ? 254 : space),
+	int space)
 {
-	const unsigned char *p = src;
-	char *dend, *dbegin = dest;
+	const int space0 = space > 254 ? 254 : space;
+	_Array_ptr<const unsigned char> p : bounds(src, end) = src;
 	int len = -1, i, j;
 	if (p==end || space <= 0) return -1;
-	dend = dest + (space > 254 ? 254 : space);
+	const _Array_ptr<const char> dbegin : count(space0) = dest;
+	const _Array_ptr<const char> dend : count(0) = dest + space0;
+	// dst loops through bounds(dbegin, dend).
+	_Array_ptr<char> dst : bounds(dbegin, dend) = dest;
 	/* detect reference loop using an iteration counter */
 	for (i=0; i < end-base; i+=2) {
-		/* loop invariants: p<end, dest<dend */
+		/* loop invariants: p<end, dst<dend */
 		if (*p & 0xc0) {
 			if (p+1==end) return -1;
 			j = ((p[0] & 0x3f) << 8) | p[1];
@@ -17,12 +24,12 @@ int __dn_expand(const unsigned char *base, const unsigned char *end, const unsig
 			if (j >= end-base) return -1;
 			p = base+j;
 		} else if (*p) {
-			if (dest != dbegin) *dest++ = '.';
+			if (dst != dbegin) *dst++ = '.';
 			j = *p++;
-			if (j >= end-p || j >= dend-dest) return -1;
-			while (j--) *dest++ = *p++;
+			if (j >= end-p || j >= dend-dst) return -1;
+			while (j--) *dst++ = *p++;
 		} else {
-			*dest = 0;
+			*dst = 0;
 			if (len < 0) len = p+1-src;
 			return len;
 		}

@@ -39,7 +39,9 @@ typedef enum __ns_sect {
 typedef struct __ns_msg {
 	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(_Ptr<const unsigned char>);
 	uint16_t _id, _flags, _counts[ns_s_max] : itype(uint16_t _Nt_checked[ns_s_max]);
-	// each _sections[i] has bounds(_section[i], _eom)
+	// _sections is a fixed-size array of _Array_ptr<const unsigned char>. The inner _Array_ptr has
+	// bounds(_msg_ptr, _eom). But we cannot specify bounds for an inner array in Checked C yet.
+	// See github.com/microsoft/checkedc/issues/173 for a related proposal.
 	const unsigned char *_sections[ns_s_max] : itype(_Array_ptr<const unsigned char> _Checked[ns_s_max]);
 	ns_sect _sect;
 	int _rrnum;
@@ -58,7 +60,7 @@ extern const struct _ns_flagdata _ns_flagdata[];
 	(((handle)._flags & _ns_flagdata[flag].mask) >> _ns_flagdata[flag].shift)
 
 typedef	struct __ns_rr {
-	char		name[NS_MAXDNAME] : itype(char _Nt_checked[NS_MAXDNAME]);
+	char		name[NS_MAXDNAME] : itype(char _Checked[NS_MAXDNAME]);
 	uint16_t	type;
 	uint16_t	rr_class;
 	uint32_t	ttl;
@@ -345,7 +347,7 @@ int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
 	const unsigned char *eom : itype(_Ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, eom),
-	char *dst : count(dst_size) itype(_Nt_array_ptr<char>),
+	char *dst : count(dst_size) itype(_Array_ptr<char>),
 	size_t dst_size);
 
 

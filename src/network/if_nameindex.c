@@ -13,7 +13,7 @@ struct ifnamemap {
 	unsigned int hash_next;
 	unsigned int index;
 	unsigned char namelen;
-	char name[IFNAMSIZ];
+	char name[IFNAMSIZ] : itype(char _Nt_checked[IFNAMSIZ]);
 };
 
 struct ifnameindexctx {
