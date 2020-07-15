@@ -381,14 +381,13 @@ struct sockaddr_storage {
 };
 
 int socket (int, int, int);
-int socketpair (int, int, int, int [2]);
+int socketpair(int domain, int type, int protocol,
+	int fd[2] : itype(int _Checked[2]));
 
 int shutdown (int, int);
 int bind(int fd,
 	const struct sockaddr *addr : byte_count(len),
 	socklen_t len);
-int socketpair(int domain, int type, int protocol,
-	int fd[2] : itype(int _Checked[2]));
 int connect(int fd,
 	const struct sockaddr *addr : byte_count(len),
 	socklen_t len);
