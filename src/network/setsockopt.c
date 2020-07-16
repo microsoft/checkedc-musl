@@ -11,7 +11,7 @@ int setsockopt(int fd, int level, int optname,
 	const void *optval : byte_count(optlen),
 	socklen_t optlen)
 {
-	_Ptr<const struct timeval> tv = ((void *)0);
+	_Ptr<const struct timeval> tv = 0;
 	time_t s;
 	suseconds_t us;
 
