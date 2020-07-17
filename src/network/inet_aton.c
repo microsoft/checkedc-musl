@@ -9,6 +9,7 @@ int __inet_aton(const char *s0 : itype(_Nt_array_ptr<const char>),
 	struct in_addr *dest : itype(_Ptr<struct in_addr>))
 {
 	_Nt_array_ptr<const char> s = s0;
+	// Struct in_addr has 32 bytes. Cast it to unsigned char pointer with count(4).
 	_Array_ptr<unsigned char> d : count(4) = (_Array_ptr<unsigned char>)dest;
 	unsigned long a _Checked[4] = { 0 };
 	_Array_ptr<char> z; // Bounds are not known until the call to strtoul.
