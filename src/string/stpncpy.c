@@ -12,22 +12,18 @@ char *__stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n),
                 size_t n)
   :itype(_Nt_array_ptr<char>) count(n)
 _Checked{
-// This part is GCC Specific code and uses unchecked pointer,
-// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__
 	typedef size_t __attribute__((__may_alias__)) word;
-	word *wd;
-	const word *ws;
+	_Nt_array_ptr<word> wd : count(n) = 0;
+	_Nt_array_ptr<const word> ws : count(n) = 0;
 	if (((uintptr_t)s & ALIGN) == ((uintptr_t)d & ALIGN)) {
 		for (; ((uintptr_t)s & ALIGN) && n && (*d=*s); n--, s++, d++);
 		if (!n || !*s) goto tail;
-		wd=(void *)d; ws=(const void *)s;
+		wd=(_Nt_array_ptr<word>)d; ws=(_Nt_array_ptr<const word>)s;
 		for (; n>=sizeof(size_t) && !HASZERO(*ws);
 		       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
-		d=(void *)wd; s=(const void *)ws;
+		d=(restrict _Nt_array_ptr<char>)wd; s=(restrict _Nt_array_ptr<const char>)ws;
 	}
-#endif
 #endif
 	for (; n && (*d=*s); n--, s++, d++);
 tail:

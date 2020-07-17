@@ -49,15 +49,22 @@ int memcmp (const void * : itype(_Array_ptr<const void>) byte_count(n),
 void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n),
               int c,
               size_t n)
-  : bounds(src, (_Array_ptr<char>) src + n);
+  : itype(_Array_ptr<void>) byte_count(n);
 char *strcpy (char *__restrict, const char *__restrict);
-char *strncpy (char *__restrict, const char *__restrict, size_t);
+// Copies the first n characters of source to destination. If the end of the source C string (which is signaled by a null-character) is found before num characters have been copied, destination is padded with zeros until a total of num characters have been written to it.
+char *strncpy(char *__restrict d : itype(__restrict _Nt_array_ptr<char>) count(n),
+              const char *__restrict s : itype(__restrict _Nt_array_ptr<const char>) count(n),
+              size_t n)
+  : itype(_Nt_array_ptr<char>) count(n);
 
 char *strcat (char *__restrict, const char *__restrict);
 char *strncat (char *__restrict, const char *__restrict, size_t);
 
 int strcmp (const char *, const char *);
-int strncmp (const char *, const char *, size_t);
+// Compares up to n characters of the C string str1 to those of the C string str2.
+int strncmp(const char * : itype(_Nt_array_ptr<const char>) count(n),
+            const char * : itype(_Nt_array_ptr<const char>) count(n),
+            size_t n);
 
 int strcoll (const char *, const char *);
 size_t strxfrm (char *__restrict, const char *__restrict, size_t);
@@ -70,8 +77,8 @@ size_t strspn (const char *, const char *);
 char *strpbrk (const char *, const char *);
 char *strstr (const char *, const char *);
 char *strtok (char *__restrict, const char *__restrict);
-
-size_t strlen (const char *);
+// Returns the length of string.
+size_t strlen (const char * : itype(_Array_ptr<const char>));
 
 char *strerror (int);
 
@@ -87,12 +94,12 @@ int strerror_r (int, char *, size_t);
 char *stpcpy(char *__restrict, const char *__restrict);
 // Copies at most n characters from the string pointed to by src, including the terminating null byte ('\0'),
 // to the array pointed to by dest.
-char *stpncpy(char *__restrict d : itype(__restrict _Nt_array_ptr<char>) count(n),
-              const char *restrict s : itype(__restrict _Nt_array_ptr<const char>) count(n),
+char *stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n),
+              const char *restrict s : itype(restrict _Nt_array_ptr<const char>) count(n),
               size_t n)
-  : itype(_Nt_array_ptr<char>) count(n);
+  :itype(_Nt_array_ptr<char>) count(n);
 // Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
-size_t strnlen (const char * : itype(_Nt_array_ptr<const char>) count(n), size_t n);
+size_t strnlen (const char * : itype(_Array_ptr<const char>) count(n), size_t n);
 char *strdup (const char *);
 char *strndup (const char *, size_t);
 char *strsignal(int);

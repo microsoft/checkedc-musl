@@ -12,32 +12,26 @@ size_t strlcpy(char *d : itype(_Nt_array_ptr<char>) count(n),
                const char *s : itype(_Nt_array_ptr<const char>) count(n),
                size_t n)
 _Checked{
-	_Nt_array_ptr<char> d0 : count(n) = d;
-// Is not compiled by checkedc compiler
-	_Unchecked{size_t *wd;}
-
+       _Nt_array_ptr<char> d0 : count(n) = d;
+       _Nt_array_ptr<size_t> wd : count(n) = 0;
 	if (!n--) goto finish;
-// This part is GCC Specific code and uses unchecked pointer,
-// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__
 	typedef size_t __attribute__((__may_alias__)) word;
-	const word *ws;
+       _Nt_array_ptr<const word> ws : count(n) = 0;
 	if (((uintptr_t)s & ALIGN) == ((uintptr_t)d & ALIGN)) {
 		for (; ((uintptr_t)s & ALIGN) && n && (*d=*s); n--, s++, d++);
 		if (n && *s) {
-			wd=(void *)d; ws=(const void *)s;
+			//cast from (void *) to _Nt_array_ptr<size_t>
+			//cast from (const void *) to _Nt_array_ptr<const void>
+			wd=(_Nt_array_ptr<size_t>)d; ws=(_Nt_array_ptr<const word>)s;
 			for (; n>=sizeof(size_t) && !HASZERO(*ws);
 			       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
-			d=(void *)wd; s=(const void *)ws;
+			d=(_Nt_array_ptr<char>)wd; s=(_Nt_array_ptr<const char>)ws;
 		}
 	}
-#endif
 #endif
 	for (; n && (*d=*s); n--, s++, d++);
 	*d = 0;
 finish:
-// The unchecked scope will be removed when the compiler has support
-// to convert strlen function
-	_Unchecked{return d-d0 + strlen(s);}
+	return d-d0 + strlen(s);
 }
