@@ -8,12 +8,16 @@
 #include <stdint.h>
 #include "lookup.h"
 
-int gethostbyname2_r(const char *name, int af,
-	struct hostent *h, char *buf, size_t buflen,
-	struct hostent **res, int *err)
+int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
+	int af,
+	struct hostent *h : itype(_Ptr<struct hostent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
+	int *err : itype(_Ptr<int>))
 {
-	struct address addrs[MAXADDRS];
-	char canon[256];
+	struct address addrs _Checked[MAXADDRS];
+	char canon _Nt_checked[256];
 	int i, cnt;
 	size_t align, need;
 
@@ -45,7 +49,7 @@ int gethostbyname2_r(const char *name, int af,
 	need = 4*sizeof(char *);
 	need += (cnt + 1) * (sizeof(char *) + h->h_length);
 	need += strlen(name)+1;
-	need += strlen(canon)+1;
+	need += strlen((const char *)canon)+1;
 	need += align;
 
 	if (need > buflen) return ERANGE;
@@ -64,7 +68,7 @@ int gethostbyname2_r(const char *name, int af,
 	h->h_addr_list[i] = 0;
 
 	h->h_name = h->h_aliases[0] = buf;
-	strcpy(h->h_name, canon);
+	strcpy(h->h_name, (const char *)canon);
 	buf += strlen(h->h_name)+1;
 
 	if (strcmp(h->h_name, name)) {

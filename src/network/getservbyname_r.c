@@ -10,8 +10,12 @@
 
 #define ALIGN (sizeof(struct { char a; char *b; }) - sizeof(char *))
 
-int getservbyname_r(const char *name, const char *prots,
-	struct servent *se, char *buf, size_t buflen, struct servent **res)
+int getservbyname_r(const char *name : itype(_Nt_array_ptr<const char>),
+	const char *prots : itype(_Nt_array_ptr<const char>),
+	struct servent *se : itype(_Ptr<struct servent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct servent **res : itype(_Ptr<_Ptr<struct servent>>))
 {
 	struct service servs[MAXSERVS];
 	int cnt, proto, align;
