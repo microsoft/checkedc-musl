@@ -87,12 +87,12 @@ wchar_t *wmemchr(const wchar_t *s : itype(_Nt_array_ptr<const wchar_t>) count(n)
   : itype(_Nt_array_ptr<wchar_t>) count(n);
 // Compares the first n wide characters of the block of memory pointed by l to the first n wide characters pointed by r,
 // returning zero if they all match or a value different from zero representing which is greater if they do not.
-int wmemcmp(const wchar_t *l : itype(_Nt_array_ptr<const wchar_t>) count(n),
-            const wchar_t *r : itype(_Nt_array_ptr<const wchar_t>) count(n),
+int wmemcmp(const wchar_t *l : itype(_Nt_array_ptr<const wchar_t>),
+            const wchar_t *r : itype(_Nt_array_ptr<const wchar_t>),
             size_t n);
 // Copies the values of n elements of type wchar_t from the location pointed by s to the location pointed by d.
 wchar_t *wmemcpy(wchar_t *restrict d : itype(__restrict _Nt_array_ptr<wchar_t>) count(n),
-                 const wchar_t *restrict s : itype(__restrict _Nt_array_ptr<const wchar_t>) count(n),
+                 const wchar_t *restrict s : itype(__restrict _Nt_array_ptr<const wchar_t>),
                  size_t n)
   : itype(_Nt_array_ptr<wchar_t>) count(n);
 // Copies the values of n elements of type wchar_t from the location pointed by s to the location pointed by d.
@@ -194,7 +194,7 @@ size_t wcsnlen(const wchar_t *s : itype(_Nt_array_ptr<const wchar_t>), size_t n)
 wchar_t *wcpcpy (wchar_t *__restrict, const wchar_t *__restrict);
 // Copies at most n wide characters from the wide-character string pointed to by s, including the terminating null wide ('\0'), to the array pointed to by d
 wchar_t *wcpncpy (wchar_t *__restrict : itype(__restrict _Nt_array_ptr<wchar_t>) count(n),
-                  const wchar_t *__restrict : itype(__restrict  _Nt_array_ptr<const wchar_t>) count(n),
+                  const wchar_t *__restrict : itype(__restrict  _Nt_array_ptr<const wchar_t>),
                   size_t n)
   : itype(_Nt_array_ptr<wchar_t>) count(n);
 int wcscasecmp(const wchar_t *, const wchar_t *);
