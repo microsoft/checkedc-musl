@@ -10,10 +10,13 @@
 
 hidden void __convert_scm_timestamps(struct msghdr *, socklen_t);
 
-int recvmmsg(int fd, struct mmsghdr *msgvec, unsigned int vlen, unsigned int flags, struct timespec *timeout)
+_Checked int recvmmsg(int fd,
+	struct mmsghdr *msgvec : count(vlen),
+	unsigned int vlen, unsigned int flags,
+	struct timespec *timeout : itype(_Ptr<struct timespec>))
 {
 #if LONG_MAX > INT_MAX
-	struct mmsghdr *mh = msgvec;
+	_Array_ptr<struct mmsghdr> mh : count(vlen) = msgvec;
 	unsigned int i;
 	for (i = vlen; i; i--, mh++)
 		mh->msg_hdr.__pad1 = mh->msg_hdr.__pad2 = 0;

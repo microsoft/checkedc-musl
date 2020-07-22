@@ -3,8 +3,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "syscall.h"
+#pragma CHECKED_SCOPE on
 
-int accept4(int fd, struct sockaddr *restrict addr, socklen_t *restrict len, int flg)
+int accept4(int fd,
+	struct sockaddr *restrict addr : byte_count(*len),
+	socklen_t *restrict len : itype(restrict _Ptr<socklen_t>),
+	int flg)
 {
 	if (!flg) return accept(fd, addr, len);
 	int ret = socketcall_cp(accept4, fd, addr, len, flg, 0, 0);

@@ -2,13 +2,16 @@
 #include <sys/time.h>
 #include <errno.h>
 #include "syscall.h"
+#pragma CHECKED_SCOPE on
 
 #define IS32BIT(x) !((x)+0x80000000ULL>>32)
 #define CLAMP(x) (int)(IS32BIT(x) ? (x) : 0x7fffffffU+((0ULL+(x))>>63))
 
-int setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+int setsockopt(int fd, int level, int optname,
+	const void *optval : byte_count(optlen),
+	socklen_t optlen)
 {
-	const struct timeval *tv;
+	_Ptr<const struct timeval> tv = 0;
 	time_t s;
 	suseconds_t us;
 

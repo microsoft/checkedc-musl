@@ -2,11 +2,14 @@
 #include <sys/time.h>
 #include <errno.h>
 #include "syscall.h"
+#pragma CHECKED_SCOPE on
 
-int getsockopt(int fd, int level, int optname, void *restrict optval, socklen_t *restrict optlen)
+int getsockopt(int fd, int level, int optname,
+	void *restrict optval : byte_count(*optlen),
+	socklen_t *restrict optlen: itype(restrict _Ptr<socklen_t>))
 {
-	long tv32[2];
-	struct timeval *tv;
+	long tv32 _Checked[2];
+	_Ptr<struct timeval> tv = 0;
 
 	int r = __socketcall(getsockopt, fd, level, optname, optval, optlen, 0);
 

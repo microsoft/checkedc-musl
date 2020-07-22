@@ -5,16 +5,18 @@
 #include <string.h>
 #include "syscall.h"
 
-hidden void __convert_scm_timestamps(struct msghdr *, socklen_t);
+hidden void __convert_scm_timestamps(struct msghdr *msg : itype(_Ptr<struct msghdr>),
+	socklen_t);
 
-void __convert_scm_timestamps(struct msghdr *msg, socklen_t csize)
+void __convert_scm_timestamps(struct msghdr *msg : itype(_Ptr<struct msghdr>),
+	socklen_t csize)
 {
 	if (SCM_TIMESTAMP == SCM_TIMESTAMP_OLD) return;
 	if (!msg->msg_control || !msg->msg_controllen) return;
 
-	struct cmsghdr *cmsg, *last=0;
+	_Ptr<struct cmsghdr> cmsg = 0, last=0;
 	long tmp;
-	long long tvts[2];
+	long long tvts _Checked[2];
 	int type = 0;
 
 	for (cmsg=CMSG_FIRSTHDR(msg); cmsg; cmsg=CMSG_NXTHDR(msg, cmsg)) {
@@ -47,12 +49,15 @@ void __convert_scm_timestamps(struct msghdr *msg, socklen_t csize)
 	memcpy(CMSG_DATA(cmsg), &tvts, sizeof tvts);
 }
 
-ssize_t recvmsg(int fd, struct msghdr *msg, int flags)
+_Checked ssize_t recvmsg(int fd,
+	struct msghdr *msg : itype(_Ptr<struct msghdr>),
+	int flags)
 {
 	ssize_t r;
 	socklen_t orig_controllen = msg->msg_controllen;
 #if LONG_MAX > INT_MAX
-	struct msghdr h, *orig = msg;
+	struct msghdr h = {};
+	_Ptr<struct msghdr> orig = msg;
 	if (msg) {
 		h = *msg;
 		h.__pad1 = h.__pad2 = 0;
