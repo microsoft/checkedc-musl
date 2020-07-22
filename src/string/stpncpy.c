@@ -8,8 +8,8 @@
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
 char *__stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
-                      const char *restrict s,
-                      size_t n)
+                const char *restrict s,
+                size_t n)
   : itype(_Array_ptr<char>) count(n)
 {
 #ifdef __GNUC__
