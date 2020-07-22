@@ -23,7 +23,7 @@ extern "C" {
 #include <bits/alltypes.h>
 
 // Returns a pointer to dest.
-// Copies n bytes form src to the memory region dest points to.
+// Copies n bytes from src to the memory region dest points to.
 void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
               const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
               size_t n)
@@ -121,7 +121,6 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 char *strsep(char **, const char *);
-//size_t strlcat (char *, const char *, size_t);
 // Appends the NUL-terminated string s to the end of d.
 // It will append at most n - strlen(dst) - 1 bytes, NUL-terminating the result.
 size_t strlcat(char *d : itype(_Nt_array_ptr<char>) count(n),
