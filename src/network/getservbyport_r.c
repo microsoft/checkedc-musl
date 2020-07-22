@@ -7,8 +7,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-int getservbyport_r(int port, const char *prots,
-	struct servent *se, char *buf, size_t buflen, struct servent **res)
+int getservbyport_r(int port,
+	const char *prots : itype(_Nt_array_ptr<const char>),
+	struct servent *se : itype(_Ptr<struct servent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct servent **res : itype(_Ptr<_Ptr<struct servent>>))
 {
 	int i;
 	struct sockaddr_in sin = {
