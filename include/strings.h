@@ -36,18 +36,13 @@ int ffsll (long long);
 int strcasecmp (const char *, const char *);
 // Compares the two strings s1 and s2, ignoring the case of the characters.
 // and stop after n characters
-int strncasecmp(const char *_l : itype(_Nt_array_ptr<const char>) count(n),
-                const char *_r : itype(_Nt_array_ptr<const char>) count(n),
-                size_t n);
+int strncasecmp(const char *_l, const char *_r, size_t n);
 
 int strcasecmp_l (const char *, const char *, locale_t);
 // Compares the two strings s1 and s2, ignoring the case of the characters.
 // and stop after n characters. The loc parameter determines the case of the characters
 // expilicitly
-int strncasecmp_l(const char * : itype(_Nt_array_ptr<const char>) count(n),
-                  const char * : itype(_Nt_array_ptr<const char>) count(n),
-                  size_t n,
-                  locale_t loc);
+int strncasecmp_l(const char *, const char *, size_t n, locale_t loc);
 
 #ifdef __cplusplus
 }

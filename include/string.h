@@ -53,7 +53,7 @@ void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n),
 char *strcpy (char *__restrict, const char *__restrict);
 // Copies the first n characters of source to destination. If the end of the source C string (which is signaled by a null-character) is found before num characters have been copied, destination is padded with zeros until a total of num characters have been written to it.
 char *strncpy(char *__restrict d : itype(__restrict _Nt_array_ptr<char>) count(n),
-              const char *__restrict s : itype(__restrict _Nt_array_ptr<const char>) count(n),
+              const char *__restrict s,
               size_t n)
   : itype(_Nt_array_ptr<char>) count(n);
 
@@ -62,10 +62,7 @@ char *strncat (char *__restrict, const char *__restrict, size_t);
 
 int strcmp (const char *, const char *);
 // Compares up to n characters of the C string str1 to those of the C string str2.
-int strncmp(const char * : itype(_Nt_array_ptr<const char>) count(n),
-            const char * : itype(_Nt_array_ptr<const char>) count(n),
-            size_t n);
-
+int strncmp(const char *, const char *, size_t n);
 int strcoll (const char *, const char *);
 size_t strxfrm (char *__restrict, const char *__restrict, size_t);
 
@@ -95,7 +92,7 @@ char *stpcpy(char *__restrict, const char *__restrict);
 // Copies at most n characters from the string pointed to by src, including the terminating null byte ('\0'),
 // to the array pointed to by dest.
 char *stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n),
-              const char *restrict s : itype(restrict _Nt_array_ptr<const char>) count(n),
+              const char *restrict s,
               size_t n)
   :itype(_Nt_array_ptr<char>) count(n);
 // Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
@@ -123,13 +120,11 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
 char *strsep(char **, const char *);
 // Appends the NUL-terminated string s to the end of d.
 // It will append at most n - strlen(dst) - 1 bytes, NUL-terminating the result.
-size_t strlcat(char *d : itype(_Nt_array_ptr<char>) count(n),
-               const char *s : itype(_Nt_array_ptr<const char>) count(n),
-               size_t n);
+size_t strlcat(char *d, const char *s, size_t n);
 // Copies up to size - 1 characters from the NUL-terminated string s to d,
 // NUL-terminating the result.
 size_t strlcpy(char *d : itype(_Nt_array_ptr<char>) count(n),
-               const char *s : itype(_Nt_array_ptr<const char>) count(n),
+               const char *s,
                size_t n);
 // Places n zero-valued bytes in the area pointed to by s.
 // Will not be removed by a compiler's dead store optimization pass
