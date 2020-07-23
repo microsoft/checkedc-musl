@@ -53,7 +53,7 @@ wchar_t *wcscpy (wchar_t *__restrict, const wchar_t *__restrict);
 wchar_t *wcsncpy(wchar_t *restrict d : itype(__restrict _Array_ptr<wchar_t>) count(n),
                  const wchar_t *restrict s,
                  size_t n)
-  : itype(_Array_ptr<wchar_t>) count(n);
+  : itype(_Nt_array_ptr<wchar_t>) count(n);
 
 wchar_t *wcscat (wchar_t *__restrict, const wchar_t *__restrict);
 wchar_t *wcsncat (wchar_t *__restrict, const wchar_t *__restrict, size_t);
