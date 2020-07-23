@@ -87,9 +87,7 @@ wchar_t *wmemchr(const wchar_t *s : itype(_Nt_array_ptr<const wchar_t>) count(n)
   : itype(_Nt_array_ptr<wchar_t>) count(n);
 // Compares the first n wide characters of the block of memory pointed by l to the first n wide characters pointed by r,
 // returning zero if they all match or a value different from zero representing which is greater if they do not.
-int wmemcmp(const wchar_t *l : itype(_Nt_array_ptr<const wchar_t>) count(n),
-            const wchar_t *r : itype(_Nt_array_ptr<const wchar_t>) count(n),
-            size_t n);
+int wmemcmp(const wchar_t *l, const wchar_t *r, size_t n);
 // Copies the values of n elements of type wchar_t from the location pointed by s to the location pointed by d.
 wchar_t *wmemcpy(wchar_t *restrict d : itype(__restrict _Nt_array_ptr<wchar_t>) count(n),
                  const wchar_t *restrict s : itype(__restrict _Nt_array_ptr<const wchar_t>) count(n),
