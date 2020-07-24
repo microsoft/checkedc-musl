@@ -8,22 +8,25 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-size_t strlcpy(char *d, const char *s, size_t n)
+size_t strlcpy(char *d : itype(_Nt_array_ptr<char>) count(n),
+               const char *s,
+               size_t n)
 {
-	char *d0 = d;
-	size_t *wd;
-
+       _Nt_array_ptr<char> d0 : count(n) = d;
+       _Nt_array_ptr<size_t> wd : count(n) = 0;
 	if (!n--) goto finish;
 #ifdef __GNUC__
 	typedef size_t __attribute__((__may_alias__)) word;
-	const word *ws;
+        const word *ws;
 	if (((uintptr_t)s & ALIGN) == ((uintptr_t)d & ALIGN)) {
 		for (; ((uintptr_t)s & ALIGN) && n && (*d=*s); n--, s++, d++);
 		if (n && *s) {
-			wd=(void *)d; ws=(const void *)s;
+			//cast from (void *) to _Nt_array_ptr<size_t>
+			//cast from (const void *) to _Nt_array_ptr<const void>
+			wd=(_Nt_array_ptr<size_t>)d; ws=(const void *)s;
 			for (; n>=sizeof(size_t) && !HASZERO(*ws);
 			       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
-			d=(void *)wd; s=(const void *)ws;
+			d=(_Nt_array_ptr<char>)wd; s=(const void *)ws;
 		}
 	}
 #endif
