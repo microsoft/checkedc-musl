@@ -142,7 +142,11 @@ void sync(void);
 pid_t setpgrp(void);
 char *crypt(const char *, const char *);
 void encrypt(char *, int);
-void swab(const void *__restrict, void *__restrict, ssize_t);
+// Copies n bytes from the array pointed to by _src to the array pointed to by _dest,
+// exchanging adjacent even and odd bytes.
+void swab(const void *restrict _src : itype(restrict _Array_ptr<const void>) byte_count(n),
+          void *restrict _dest : itype(restrict _Array_ptr<void>) byte_count(n),
+          ssize_t n);
 #endif
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE) \
