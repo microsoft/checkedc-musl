@@ -16,25 +16,26 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 	_Nt_array_ptr<const unsigned char> s)
 {
 	int i=0;
+	_Nt_array_ptr<const unsigned char> s_tmp : bounds(s, s + 0) = s;
 	_Nt_array_ptr<const unsigned char> s_widened : count(1) = 0;
 	for (;;) {
-		while (*s & 0xc0) {
-			if ((*s & 0xc0) != 0xc0) return 0;
+		while (*s_tmp & 0xc0) {
+			if ((*s_tmp & 0xc0) != 0xc0) return 0;
 
 			// (*s & 0xc0) != 0 implies *s != 0. So we can widen the bounds of s.
 			// Manually widen the bounds for now. The compiler cannot figure it out yet.
 			_Unchecked {
-				s_widened = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(s, count(1));
+				s_widened = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(s_tmp, count(1));
 			}
 			// Decode offset and calculate the start position of the compressed domain name.
-			s = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
+			s_tmp = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
 		}
 		// s reaches the end of the domain name.
-		if (!*s) return i;
-		if (s-base >= 0x4000) return 0;
-		offs[i++] = s-base;
+		if (!*s_tmp) return i;
+		if (s_tmp-base >= 0x4000) return 0;
+		offs[i++] = s_tmp-base;
 		// Move to the next component.
-		s += *s + 1;
+		s_tmp += *s_tmp + 1;
 	}
 }
 
@@ -112,10 +113,13 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	int i, j, n, m=0, offset, bestlen=0, bestoff;
 	unsigned char lens _Checked[127];
 	size_t l;
-	_Nt_array_ptr<const char> src_l : count(l) = 0;
-	// TODO(yahsun): remove the unchecked scope once the str* functions are annotated with bounds-safe interfaces.
+	// TODO: bounds-safe interface for the 1st parameter of strnlen appears incorrect. It should
+	// accept an Nt_array_ptr with count(0).
 	_Unchecked {
-		l = strnlen(src, 255);
+		l = strnlen((const char *)src, 255);
+	}
+	_Nt_array_ptr<const char> src_l : count(l) = 0;
+	_Unchecked {
 		src_l = _Assume_bounds_cast<_Nt_array_ptr<const char>>(src, count(l));
 	}
 	if (l && src_l[l-1] == '.') l--;

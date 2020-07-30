@@ -10,7 +10,7 @@
 int getservbyport_r(int port,
 	const char *prots : itype(_Nt_array_ptr<const char>),
 	struct servent *se : itype(_Ptr<struct servent>),
-	char *buf : count(buflen),
+	char *buf_ori : count(buflen),
 	size_t buflen,
 	struct servent **res : itype(_Ptr<_Ptr<struct servent>>))
 {
@@ -20,6 +20,7 @@ int getservbyport_r(int port,
 		.sin_port = port,
 	};
 
+	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
 	if (!prots) {
 		int r = getservbyport_r(port, "tcp", se, buf, buflen, res);
 		if (r) r = getservbyport_r(port, "udp", se, buf, buflen, res);
@@ -45,7 +46,7 @@ int getservbyport_r(int port,
 	se->s_aliases[1] = 0;
 	se->s_aliases[0] = se->s_name = buf;
 
-	switch (getnameinfo((void *)&sin, sizeof sin, 0, 0, buf, buflen,
+	switch (getnameinfo((void *)&sin, sizeof sin, 0, 0, (char *)buf, buflen,
 		strcmp(prots, "udp") ? 0 : NI_DGRAM)) {
 	case EAI_MEMORY:
 	case EAI_SYSTEM:
@@ -57,7 +58,7 @@ int getservbyport_r(int port,
 	}
 
 	/* A numeric port string is not a service record. */
-	if (strtol(buf, 0, 10)==ntohs(port)) return ENOENT;
+	if (strtol((char *)buf, 0, 10)==ntohs(port)) return ENOENT;
 
 	*res = se;
 	return 0;

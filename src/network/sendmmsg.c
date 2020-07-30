@@ -14,9 +14,10 @@ int sendmmsg(int fd,
 	 * idea for the types of msg_iovlen, msg_controllen, and cmsg_len,
 	 * and the cmsg blocks cannot be modified in-place. */
 	int i;
-	if (vlen > IOV_MAX) vlen = IOV_MAX; /* This matches the kernel. */
-	if (!vlen) return 0;
-	for (i=0; i<vlen; i++) {
+	unsigned int vlen_tmp = vlen;
+	if (vlen_tmp > IOV_MAX) vlen_tmp = IOV_MAX; /* This matches the kernel. */
+	if (!vlen_tmp) return 0;
+	for (i=0; i<vlen_tmp; i++) {
 		/* As an unfortunate inconsistency, the sendmmsg API uses
 		 * unsigned int for the resulting msg_len, despite sendmsg
 		 * returning ssize_t. However Linux limits the total bytes
