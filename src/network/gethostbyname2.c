@@ -5,11 +5,12 @@
 #include <errno.h>
 #include <stdlib.h>
 
-struct hostent *gethostbyname2(const char *name, int af)
+struct hostent *gethostbyname2(const char *name : itype(_Nt_array_ptr<const char>),
+	int af) : itype(_Ptr<struct hostent>)
 {
 	static struct hostent *h;
 	size_t size = 63;
-	struct hostent *res;
+	_Ptr<struct hostent> res = 0;
 	int err;
 	do {
 		free(h);

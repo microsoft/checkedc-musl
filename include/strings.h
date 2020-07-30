@@ -13,9 +13,16 @@ extern "C" {
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE) || defined(_POSIX_SOURCE) \
  || (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE+0 < 200809L) \
  || (defined(_XOPEN_SOURCE) && _XOPEN_SOURCE+0 < 700)
-int bcmp (const void *, const void *, size_t);
-void bcopy (const void *, void *, size_t);
-void bzero (void *, size_t);
+// Compares the two byte sequences s1 and s2 of length n each.
+int bcmp (const void * : itype(_Array_ptr<const void>) byte_count(n),
+          const void * : itype(_Array_ptr<const void>) byte_count(n),
+          size_t n);
+// Copies n bytes from the area pointed to by s1 to the area pointed to by s2.
+void bcopy (const void * : itype(_Array_ptr<const void>) byte_count(n),
+            const void * : itype(_Array_ptr<const void>) byte_count(n),
+            size_t n);
+// Places n zero-valued bytes in the area pointed to by s.
+void bzero (void * : itype(_Array_ptr<void>) byte_count(n), size_t n);
 char *index (const char *, int);
 char *rindex (const char *, int);
 #endif
@@ -27,10 +34,15 @@ int ffsll (long long);
 #endif
 
 int strcasecmp (const char *, const char *);
-int strncasecmp (const char *, const char *, size_t);
+// Compares the two strings s1 and s2, ignoring the case of the characters.
+// and stop after n characters
+int strncasecmp(const char *_l, const char *_r, size_t n);
 
 int strcasecmp_l (const char *, const char *, locale_t);
-int strncasecmp_l (const char *, const char *, size_t, locale_t);
+// Compares the two strings s1 and s2, ignoring the case of the characters.
+// and stop after n characters. The loc parameter determines the case of the characters
+// expilicitly
+int strncasecmp_l(const char *, const char *, size_t n, locale_t loc);
 
 #ifdef __cplusplus
 }

@@ -7,9 +7,14 @@
 #include <errno.h>
 #include <inttypes.h>
 
-int gethostbyaddr_r(const void *a, socklen_t l, int af,
-	struct hostent *h, char *buf, size_t buflen,
-	struct hostent **res, int *err)
+int gethostbyaddr_r(const void *a : byte_count(l),
+	socklen_t l,
+	int af,
+	struct hostent *h : itype(_Ptr<struct hostent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
+	int *err : itype(_Ptr<int>))
 {
 	union {
 		struct sockaddr_in sin;

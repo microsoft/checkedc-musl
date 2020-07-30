@@ -100,9 +100,13 @@ struct netent *getnetbyname (const char *);
 
 void setservent (int);
 void endservent (void);
-struct servent *getservent (void);
-struct servent *getservbyname (const char *, const char *);
-struct servent *getservbyport (int, const char *);
+struct servent *getservent (void) : itype(_Ptr<struct servent>);
+struct servent *getservbyname (const char *name : itype(_Nt_array_ptr<const char>),
+	const char *prots : itype(_Nt_array_ptr<const char>))
+	: itype(_Ptr<struct servent>);
+struct servent *getservbyport (int port,
+	const char *prots : itype(_Nt_array_ptr<const char>))
+	: itype(_Ptr<struct servent>);
 
 void setprotoent (int);
 void endprotoent (void);
@@ -130,12 +134,40 @@ int *__h_errno_location(void);
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 void herror(const char *);
 const char *hstrerror(int);
-int gethostbyname_r(const char *, struct hostent *, char *, size_t, struct hostent **, int *);
-int gethostbyname2_r(const char *, int, struct hostent *, char *, size_t, struct hostent **, int *);
-struct hostent *gethostbyname2(const char *, int);
-int gethostbyaddr_r(const void *, socklen_t, int, struct hostent *, char *, size_t, struct hostent **, int *);
-int getservbyport_r(int, const char *, struct servent *, char *, size_t, struct servent **);
-int getservbyname_r(const char *, const char *, struct servent *, char *, size_t, struct servent **);
+int gethostbyname_r(const char *name : itype(_Nt_array_ptr<const char>),
+	struct hostent *h : itype(_Ptr<struct hostent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
+	int *err : itype(_Ptr<int>));
+int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
+	int af,
+	struct hostent *h : itype(_Ptr<struct hostent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
+	int *err : itype(_Ptr<int>));
+struct hostent *gethostbyname2(const char *name : itype(_Nt_array_ptr<const char>),
+	int af) : itype(_Ptr<struct hostent>);
+int gethostbyaddr_r(const void *a : byte_count(l),
+	socklen_t l, int af,
+	struct hostent *h : itype(_Ptr<struct hostent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
+	int *err : itype(_Ptr<int>));
+int getservbyport_r(int port,
+	const char *prots : itype(_Nt_array_ptr<const char>),
+	struct servent *se : itype(_Ptr<struct servent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct servent **res : itype(_Ptr<_Ptr<struct servent>>));
+int getservbyname_r(const char *name : itype(_Nt_array_ptr<const char>),
+	const char *prots : itype(_Nt_array_ptr<const char>),
+	struct servent *se : itype(_Ptr<struct servent>),
+	char *buf : count(buflen),
+	size_t buflen,
+	struct servent **res : itype(_Ptr<_Ptr<struct servent>>));
 #define EAI_NODATA     -5
 #define EAI_ADDRFAMILY -9
 #define EAI_INPROGRESS -100
