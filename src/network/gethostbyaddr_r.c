@@ -11,7 +11,7 @@ int gethostbyaddr_r(const void *a : byte_count(l),
 	socklen_t l,
 	int af,
 	struct hostent *h : itype(_Ptr<struct hostent>),
-	char *buf : count(buflen),
+	char *buf_ori : count(buflen),
 	size_t buflen,
 	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
 	int *err : itype(_Ptr<int>))
@@ -34,6 +34,7 @@ int gethostbyaddr_r(const void *a : byte_count(l),
 	}
 
 	/* Align buffer and check for space for pointers and ip address */
+	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
 	i = (uintptr_t)buf & sizeof(char *)-1;
 	if (!i) i = sizeof(char *);
 	if (buflen <= 5*sizeof(char *)-i + l) return ERANGE;
@@ -52,7 +53,7 @@ int gethostbyaddr_r(const void *a : byte_count(l),
 	h->h_aliases[0] = buf;
 	h->h_aliases[1] = 0;
 
-	switch (getnameinfo((void *)&sa, sl, buf, buflen, 0, 0, 0)) {
+	switch (getnameinfo((void *)&sa, sl, (char *)buf, buflen, 0, 0, 0)) {
 	case EAI_AGAIN:
 		*err = TRY_AGAIN;
 		return EAGAIN;

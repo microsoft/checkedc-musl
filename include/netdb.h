@@ -67,11 +67,11 @@ struct netent {
 };
 
 struct hostent {
-	char *h_name;
-	char **h_aliases;
+	char *h_name : itype(_Nt_array_ptr<char>);
+	char **h_aliases : itype(_Array_ptr<_Array_ptr<char>>);
 	int h_addrtype;
 	int h_length;
-	char **h_addr_list;
+	char **h_addr_list : itype(_Array_ptr<_Array_ptr<char>>);
 };
 #define h_addr h_addr_list[0]
 
