@@ -44,7 +44,7 @@ int getservbyport_r(int port,
 	buf += 2*sizeof(char *);
 	buflen -= 2*sizeof(char *);
 	se->s_aliases[1] = 0;
-	se->s_aliases[0] = se->s_name = buf;
+	se->s_aliases[0] = se->s_name =(char *)buf;
 
 	switch (getnameinfo((void *)&sin, sizeof sin, 0, 0, (char *)buf, buflen,
 		strcmp(prots, "udp") ? 0 : NI_DGRAM)) {
