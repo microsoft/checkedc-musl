@@ -50,11 +50,10 @@ extern "C" {
 wchar_t *wcscpy (wchar_t *__restrict, const wchar_t *__restrict);
 // Copies the first n characters of source to destination. If the end of the source C wide string is found before n characters have been copied,
 // destination is padded with additional null wide characters until a total of n characters have been written to it.
-wchar_t *wcsncpy(wchar_t *restrict d : itype(__restrict _Array_ptr<wchar_t>) count(n),
+wchar_t *wcsncpy(wchar_t *restrict d : itype(__restrict _Nt_array_ptr<wchar_t>) count(n),
                  const wchar_t *restrict s,
                  size_t n)
   : itype(_Nt_array_ptr<wchar_t>) count(n);
-
 wchar_t *wcscat (wchar_t *__restrict, const wchar_t *__restrict);
 wchar_t *wcsncat (wchar_t *__restrict, const wchar_t *__restrict, size_t);
 
