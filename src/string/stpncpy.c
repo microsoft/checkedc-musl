@@ -7,10 +7,10 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-char *__stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n - 1),
-                const char *restrict s : itype(restrict _Nt_array_ptr<const char>) count(n),
+char *__stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
+                const char *restrict s,
                 size_t n)
-  : itype(_Nt_array_ptr<char>) count(n - 1)
+  : itype(_Array_ptr<char>) count(n)
 {
 #ifdef __GNUC__
 	typedef size_t __attribute__((__may_alias__)) word;
@@ -28,7 +28,7 @@ char *__stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n -
 	for (; n && (*d=*s); n--, s++, d++);
 tail:
 	memset(d, 0, n);
-	return d;
+	return (_Array_ptr<char>)d;
 }
 
 weak_alias(__stpncpy, stpncpy);
