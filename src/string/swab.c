@@ -7,9 +7,9 @@ _Checked{
 	_Array_ptr<const char> src : count(n / sizeof(char)) = (_Array_ptr<const char>) _src;
 	_Array_ptr<char> dest: count(n /sizeof(char)) = (_Array_ptr<char>) _dest;
 
-// n is used in the declared bounds of src and dest. But n is modified in the
-// loop and hence the declared bounds of src and dest no
-// longer remain valid. So we need to use a temp variable in this function.
+	// n is used in the declared bounds of src and dest. But n is modified in the
+	// loop and hence the declared bounds of src and dest no
+	// longer remain valid. So we need to use a temp variable in this function.
 	ssize_t temp_n = n;
 	for (; temp_n>1; temp_n-=2) {
 		dest[0] = src[1];
