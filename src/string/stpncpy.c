@@ -12,7 +12,8 @@ char *__stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
                 size_t n)
   : itype(_Array_ptr<char>) count(n)
 {
-// n and d are used in the declared bounds of d. But both are modified in the loop and hence the declared bounds of d no
+// n and d are used in the declared bounds of d. But both are modified in the
+// loop and hence the declared bounds of d no
 // longer remain valid. So we need to use a temp variable in this function.
 	size_t temp_n = n;
 	restrict _Array_ptr<char> temp_d : count(n) = d;
