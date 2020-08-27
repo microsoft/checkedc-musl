@@ -2,7 +2,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-in_addr_t inet_network(const char *p)
+in_addr_t inet_network(const char *p : itype(_Nt_array_ptr<const char>))
 {
 	return ntohl(inet_addr(p));
 }
