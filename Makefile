@@ -44,11 +44,11 @@ LIBCC = -lgcc
 CPPFLAGS =
 CFLAGS =
 CFLAGS_AUTO = -Os -pipe
-CFLAGS_C99FSE = -std=c99 -ffreestanding -nostdinc
+CFLAGS_C99FSE = -std=c99 -ffreestanding -nostdinc 
 
 CFLAGS_ALL = $(CFLAGS_C99FSE)
 CFLAGS_ALL += -D_XOPEN_SOURCE=700 -I$(srcdir)/arch/$(ARCH) -I$(srcdir)/arch/generic -Iobj/src/internal -I$(srcdir)/src/include -I$(srcdir)/src/internal -Iobj/include -I$(srcdir)/include
-CFLAGS_ALL += $(CPPFLAGS) $(CFLAGS_AUTO) $(CFLAGS) -g -O0
+CFLAGS_ALL += $(CPPFLAGS) $(CFLAGS_AUTO) $(CFLAGS)
 
 LDFLAGS_ALL = $(LDFLAGS_AUTO) $(LDFLAGS)
 
@@ -132,7 +132,6 @@ $(CRT_OBJS): CFLAGS_ALL += -DCRT
 $(LOBJS) $(LDSO_OBJS): CFLAGS_ALL += -fPIC
 
 CC_CMD = $(CC) $(CFLAGS_ALL) -c -o $@ $<
-CS_CMD = $(CC) $(CFLAGS_ALL) -c $< -S -emit-llvm
 
 # Choose invocation of assembler to be used
 ifeq ($(ADD_CFI),yes)
@@ -231,13 +230,6 @@ endif
 
 clean:
 	rm -rf obj lib
-
-clean-checked:
-	find . -name "*.checked.h" -type f -delete
-	find . -name "*.checked.c" -type f -delete
-
-a.o: test1.c $(GENH) $(IMPH)
-	$(CC_CMD)
 
 distclean: clean
 	rm -f config.mak
