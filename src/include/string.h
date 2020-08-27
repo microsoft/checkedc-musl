@@ -5,7 +5,7 @@
 
 hidden void *__memrchr(const void *, int, size_t);
 hidden char *__stpcpy(char *, const char *);
-hidden char *__stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
+hidden char *__stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n - 1),
                        const char *restrict s : itype(restrict _Nt_array_ptr<const char>) count(n),
                        size_t n)
   :itype(_Nt_array_ptr<char>) count(n - 1);

@@ -91,7 +91,7 @@ int strerror_r (int, char *, size_t);
 char *stpcpy(char *__restrict, const char *__restrict);
 // Copies at most n characters from the string pointed to by src, including the terminating null byte ('\0'),
 // to the array pointed to by dest.
-char *stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
+char *stpncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n - 1),
               const char *restrict s,
               size_t n)
   :itype(_Nt_array_ptr<char>) count(n - 1);
