@@ -1,7 +1,7 @@
 #include <resolv.h>
 
 _Checked int __dn_expand(const unsigned char *base : bounds(base, end),
-	const unsigned char *end : itype(_Ptr<const unsigned char>),
+	const unsigned char *end : itype(_Array_ptr<const unsigned char>),
 	const unsigned char *src : bounds(src, end),
 	char *dest : count(space > 254 ? 254 : space),
 	int space)
