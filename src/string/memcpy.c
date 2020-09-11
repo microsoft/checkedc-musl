@@ -11,10 +11,7 @@ _Checked
         _Array_ptr<unsigned char> d : count(n) = dest;
         _Array_ptr<const unsigned char> s : count(n) = src;
 
-// This part is GCC Specific code and uses unchecked pointer,
-// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define LS >>
 #define RS <<
@@ -122,7 +119,6 @@ _Checked
 		*d = *s;
 	}
 	return dest;
-#endif
 #endif
 
 	for (; n; n--) *d++ = *s++;

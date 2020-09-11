@@ -18,10 +18,7 @@ _Checked{
 	if ((uintptr_t)s-(uintptr_t)d-n <= -2*n) return memcpy(d, s, n);
 
 	if (d<s) {
-// This part is GCC Specific code and uses unchecked pointer,
-// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__
 		if ((uintptr_t)s % WS == (uintptr_t)d % WS) {
 			while ((uintptr_t)d % WS) {
 				if (!n--) return dest;
@@ -30,13 +27,9 @@ _Checked{
 			for (; n>=WS; n-=WS, d+=WS, s+=WS) *(WT *)d = *(WT *)s;
 		}
 #endif
-#endif
 		for (; n; n--) *d++ = *s++;
 	} else {
-// This part is GCC Specific code and uses unchecked pointer,
-// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__
 		if ((uintptr_t)s % WS == (uintptr_t)d % WS) {
 			while ((uintptr_t)(d+n) % WS) {
 				if (!n--) return dest;
@@ -44,7 +37,6 @@ _Checked{
 			}
 			while (n>=WS) n-=WS, *(WT *)(d+n) = *(WT *)(s+n);
 		}
-#endif
 #endif
 		while (n) n--, d[n] = s[n];
 	}

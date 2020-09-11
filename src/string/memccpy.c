@@ -18,23 +18,19 @@ _Checked
         _Array_ptr<const unsigned char> s : count(n) = (_Array_ptr<const unsigned char>)src;
 
 	c = (unsigned char)c;
-// This part is GCC Specific code and uses unchecked pointer,
-// Clang compiler should not compile this part.
 #ifdef __GNUC__
-#ifndef __clang__
 	typedef size_t __attribute__((__may_alias__)) word;
-	word *wd;
-	const word *ws;
+	_Array_ptr<word> wd : count(n) = 0;
+	_Array_ptr<const word> ws : count(n) = 0;
 	if (((uintptr_t)s & ALIGN) == ((uintptr_t)d & ALIGN)) {
 		for (; ((uintptr_t)s & ALIGN) && n && (*d=*s)!=c; n--, s++, d++);
 		if ((uintptr_t)s & ALIGN) goto tail;
 		size_t k = ONES * c;
-		wd=(void *)d; ws=(const void *)s;
+		wd= (_Array_ptr<void>) d; ws= (_Array_ptr<const void>) s;
 		for (; n>=sizeof(size_t) && !HASZERO(*ws^k);
 		       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
-		d=(void *)wd; s=(const void *)ws;
+		d= (_Array_ptr<void>) wd; s= (_Array_ptr<const void>) ws;
 	}
-#endif
 #endif
 	for (; n && (*d=*s)!=c; n--, s++, d++);
 tail:
