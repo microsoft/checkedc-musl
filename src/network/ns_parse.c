@@ -35,16 +35,22 @@ _Checked unsigned long ns_get32(const unsigned char *cp : count(4))
 
 _Checked void ns_put16(unsigned s, unsigned char *cp : count(2))
 {
-	*cp++ = s>>8;
-	*cp++ = s;
+	*cp = s>>8;
+	cp++;
+	*cp = s;
+	cp++;
 }
 
 _Checked void ns_put32(unsigned long l, unsigned char *cp : count(4))
 {
-	*cp++ = l>>24;
-	*cp++ = l>>16;
-	*cp++ = l>>8;
-	*cp++ = l;
+	*cp = l>>24;
+	cp++;
+	*cp = l>>16;
+	cp++;
+	*cp = l>>8;
+	cp++;
+	*cp = l;
+	cp++;
 }
 
 _Checked int ns_initparse(const unsigned char *msg : count(msglen),

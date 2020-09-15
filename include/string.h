@@ -96,7 +96,7 @@ char *stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
               size_t n)
   :itype(_Array_ptr<char>) count(n);
 // Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
-size_t strnlen (const char * : itype(_Nt_array_ptr<const char>), size_t n);
+size_t strnlen (const char * : itype(_Nt_array_ptr<const char>) count(n), size_t n);
 char *strdup (const char *);
 char *strndup (const char *, size_t);
 char *strsignal(int);
