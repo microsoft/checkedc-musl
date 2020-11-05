@@ -7,33 +7,33 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-char *__stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
+char *__stpncpy(char *restrict arg_d : itype(restrict _Array_ptr<char>)
+                                       bounds((_Array_ptr<char>)arg_d, (_Array_ptr<char>)arg_d + arg_n),
                 const char *restrict s,
-                size_t n)
-  : itype(_Array_ptr<char>) count(n)
+                size_t arg_n)
+  : itype(_Array_ptr<char>) count(arg_n)
 {
-	// n and d are used in the declared bounds of d. But both are modified in the
-	// loop and hence the declared bounds of d no
-	// longer remain valid. So we need to use a temp variable in this function.
-	size_t temp_n = n;
-	restrict _Array_ptr<char> temp_d : count(n) = d;
+	size_t n = arg_n;
+	_Array_ptr<char> d : bounds((_Array_ptr<char>)arg_d, (_Array_ptr<char>)arg_d + arg_n)
+                           = arg_d;
 #ifdef __GNUC__
 	typedef size_t __attribute__((__may_alias__)) word;
-	_Array_ptr<word> wd : count(n) = 0;
+	_Array_ptr<word> wd : bounds((_Array_ptr<char>)arg_d, (_Array_ptr<char>)arg_d + arg_n) rel_align(char)
+                            = 0;
 	const word *ws;
 	if (((uintptr_t)s & ALIGN) == ((uintptr_t)d & ALIGN)) {
-		for (; ((uintptr_t)s & ALIGN) && temp_n && (*temp_d=*s); temp_n--, s++, temp_d++);
-		if (!temp_n || !*s) goto tail;
-		wd=(_Array_ptr<word>)temp_d; ws=(const void *)s;
-		for (; temp_n>=sizeof(size_t) && !HASZERO(*ws);
-		       temp_n-=sizeof(size_t), ws++, wd++) *wd = *ws;
-		temp_d=(restrict _Array_ptr<void>)wd; s=(const void *)ws;
+		for (; ((uintptr_t)s & ALIGN) && n && (*d=*s); n--, s++, d++);
+		if (!n || !*s) goto tail;
+		wd=(_Array_ptr<void>)d; ws=(const void *)s;
+		for (; n>=sizeof(size_t) && !HASZERO(*ws);
+		       n-=sizeof(size_t), ws++, wd++) *wd = *ws;
+		d=(_Array_ptr<void>)wd; s=(const void *)ws;
 	}
 #endif
-	for (; temp_n && (*temp_d=*s); temp_n--, s++, temp_d++);
+	for (; n && (*d=*s); n--, s++, d++);
 tail:
-	memset(temp_d, 0, temp_n);
-	return (_Array_ptr<char>)temp_d;
+	memset(d, 0, n);
+	return d;
 }
 
 weak_alias(__stpncpy, stpncpy);

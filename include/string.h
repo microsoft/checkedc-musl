@@ -24,10 +24,14 @@ extern "C" {
 
 // Returns a pointer to dest.
 // Copies n bytes from src to the memory region dest points to.
-void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
-              const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
-              size_t n)
-  : itype(_Array_ptr<void>) byte_count(n);
+void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>)
+                                      bounds((_Array_ptr<unsigned char>)dest,
+                                             (_Array_ptr<unsigned char>)dest + arg_n),
+              const void *__restrict src : itype(__restrict _Array_ptr<const void>)
+                                           bounds((_Array_ptr<const unsigned char>)src,
+                                                  (_Array_ptr<const unsigned char>)src + arg_n),
+              size_t arg_n)
+  : itype(_Array_ptr<void>) byte_count(arg_n);
 // Returns a pointer to dest.
 // Copies n bytes from memory area src to memory area dest. The memory areas may overlap.
 void *memmove (void *dest: itype(_Array_ptr<void>) byte_count(n),
@@ -52,8 +56,9 @@ void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n),
   : itype(_Array_ptr<void>) byte_count(n);
 char *strcpy (char *__restrict, const char *__restrict);
 // Copies the first n characters of source to destination. If the end of the source C string (which is signaled by a null-character) is found before num characters have been copied, destination is padded with zeros until a total of num characters have been written to it.
-char *strncpy(char *__restrict d : itype(__restrict _Nt_array_ptr<char>) count(n),
-              const char *__restrict s,
+char *strncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>)
+                                 bounds((_Nt_array_ptr<char>)d, (_Nt_array_ptr<char>)d + n),
+              const char *restrict s,
               size_t n)
   : itype(_Nt_array_ptr<char>) count(n);
 
@@ -91,10 +96,11 @@ int strerror_r (int, char *, size_t);
 char *stpcpy(char *__restrict, const char *__restrict);
 // Copies at most n characters from the string pointed to by src, including the terminating null byte ('\0'),
 // to the array pointed to by dest.
-char *stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
-              const char *restrict s,
-              size_t n)
-  :itype(_Array_ptr<char>) count(n);
+char *stpncpy(char *restrict arg_d : itype(restrict _Array_ptr<char>)
+                                     bounds((_Array_ptr<char>)arg_d, (_Array_ptr<char>)arg_d + arg_n),
+                const char *restrict s,
+                size_t arg_n)
+  : itype(_Array_ptr<char>) count(arg_n);
 // Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
 size_t strnlen (const char * : itype(_Nt_array_ptr<const char>) count(n), size_t n);
 char *strdup (const char *);
@@ -109,11 +115,14 @@ size_t strxfrm_l (char *__restrict, const char *__restrict, size_t, locale_t);
  || defined(_BSD_SOURCE)
 // Returns a pointer to the next character in dest after c.
 // Copies no more than n bytes from memory area src to memory area dest, stopping when the character c is found.
-void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
-               const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
+void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>)
+                                       bounds((_Array_ptr<unsigned char>)dest,
+                                              (_Array_ptr<unsigned char>)dest + arg_n),
+               const void *__restrict src : itype(__restrict _Array_ptr<const void>)
+                                            bounds((_Array_ptr<const unsigned char>)src,
+                                                   (_Array_ptr<const unsigned char>)src + arg_n),
                int c,
-               size_t n)
-  : itype(_Array_ptr<void>) byte_count(n);
+               size_t arg_n);
 #endif
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
