@@ -2,12 +2,8 @@
 #include <stdint.h>
 #include <endian.h>
 
-void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>)
-                                      bounds((_Array_ptr<unsigned char>)dest,
-                                             (_Array_ptr<unsigned char>)dest + arg_n),
-              const void *__restrict src : itype(__restrict _Array_ptr<const void>)
-                                           bounds((_Array_ptr<const unsigned char>)src,
-                                                  (_Array_ptr<const unsigned char>)src + arg_n),
+void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(arg_n),
+              const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(arg_n),
               size_t arg_n)
   : itype(_Array_ptr<void>) byte_count(arg_n)
 _Checked

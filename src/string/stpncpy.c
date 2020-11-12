@@ -7,8 +7,7 @@
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
 
-char *__stpncpy(char *restrict arg_d : itype(restrict _Array_ptr<char>)
-                                       bounds((_Array_ptr<char>)arg_d, (_Array_ptr<char>)arg_d + arg_n),
+char *__stpncpy(char *restrict arg_d : itype(restrict _Array_ptr<char>) count(arg_n),
                 const char *restrict s,
                 size_t arg_n)
   : itype(_Array_ptr<char>) count(arg_n)

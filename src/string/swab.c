@@ -1,9 +1,7 @@
 #include <unistd.h>
 
-void swab(const void *restrict _src : itype(restrict _Array_ptr<const void>)
-                                      bounds((_Array_ptr<const char>)_src, (_Array_ptr<const char>)_src + arg_n),
-          void *restrict _dest : itype(restrict _Array_ptr<void>)
-                                 bounds((_Array_ptr<char>)_dest, (_Array_ptr<char>)_dest + arg_n),
+void swab(const void *restrict _src : itype(restrict _Array_ptr<const void>) byte_count(arg_n),
+          void *restrict _dest : itype(restrict _Array_ptr<void>) byte_count(arg_n),
           ssize_t arg_n)
 _Checked{
 	// Renamed input arg n to arg_n in order to use it in bounds declarations
