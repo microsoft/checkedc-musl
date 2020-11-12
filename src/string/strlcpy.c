@@ -16,7 +16,7 @@ size_t strlcpy(char *arg_d : itype(_Nt_array_ptr<char>) count(arg_n),
 	// declarations that remain valid through modifications to d and n in the loop body.
 	size_t n = arg_n;
 	_Nt_array_ptr<char> d : bounds(arg_d, arg_d + arg_n) = arg_d;
-	_Nt_array_ptr<size_t> wd : bounds(arg_d, arg_d + arg_n) = 0;
+	_Nt_array_ptr<size_t> wd : bounds(arg_d, arg_d + arg_n) rel_align(char) = 0;
 	if (!n--) goto finish;
 #ifdef __GNUC__
 	typedef size_t __attribute__((__may_alias__)) word;

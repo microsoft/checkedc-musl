@@ -52,8 +52,8 @@ void *memchr (const void *src : itype(_Array_ptr<const void>) byte_count(n),
   : itype(_Array_ptr<void>) byte_count(n);
 char *strcpy (char *__restrict, const char *__restrict);
 // Copies the first n characters of source to destination. If the end of the source C string (which is signaled by a null-character) is found before num characters have been copied, destination is padded with zeros until a total of num characters have been written to it.
-char *strncpy(char *restrict d : itype(restrict _Nt_array_ptr<char>) count(n),
-              const char *restrict s,
+char *strncpy(char *__restrict d : itype(__restrict _Nt_array_ptr<char>) count(n),
+              const char *__restrict s,
               size_t n)
   : itype(_Nt_array_ptr<char>) count(n);
 

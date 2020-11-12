@@ -50,8 +50,8 @@ extern "C" {
 wchar_t *wcscpy (wchar_t *__restrict, const wchar_t *__restrict);
 // Copies the first n characters of source to destination. If the end of the source C wide string is found before n characters have been copied,
 // destination is padded with additional null wide characters until a total of n characters have been written to it.
-wchar_t *wcsncpy(wchar_t *restrict arg_d : itype(restrict _Nt_array_ptr<wchar_t>) count(arg_n),
-                 const wchar_t *restrict s,
+wchar_t *wcsncpy(wchar_t *__restrict arg_d : itype(__restrict _Nt_array_ptr<wchar_t>) count(arg_n),
+                 const wchar_t *__restrict s,
                  size_t arg_n)
   : itype(_Nt_array_ptr<wchar_t>) count(arg_n);
 wchar_t *wcscat (wchar_t *__restrict, const wchar_t *__restrict);
@@ -88,8 +88,8 @@ wchar_t *wmemchr(const wchar_t *s : itype(_Nt_array_ptr<const wchar_t>) count(n)
 // returning zero if they all match or a value different from zero representing which is greater if they do not.
 int wmemcmp(const wchar_t *l, const wchar_t *r, size_t n);
 // Copies the values of n elements of type wchar_t from the location pointed by s to the location pointed by d.
-wchar_t *wmemcpy(wchar_t *restrict arg_d : itype(restrict _Nt_array_ptr<wchar_t>) count(arg_n),
-                 const wchar_t *restrict arg_s : itype(restrict _Nt_array_ptr<const wchar_t>) count(arg_n),
+wchar_t *wmemcpy(wchar_t *__restrict arg_d : itype(__restrict _Nt_array_ptr<wchar_t>) count(arg_n),
+                 const wchar_t *__restrict arg_s : itype(__restrict _Nt_array_ptr<const wchar_t>) count(arg_n),
                  size_t arg_n)
   : itype(_Nt_array_ptr<wchar_t>) count(arg_n);
 // Copies the values of n elements of type wchar_t from the location pointed by s to the location pointed by d.
@@ -190,8 +190,8 @@ wchar_t *wcsdup(const wchar_t *);
 size_t wcsnlen(const wchar_t *s : itype(_Nt_array_ptr<const wchar_t>) count(arg_n), size_t arg_n);
 wchar_t *wcpcpy (wchar_t *__restrict, const wchar_t *__restrict);
 // Copies at most n wide characters from the wide-character string pointed to by s, including the terminating null wide ('\0'), to the array pointed to by d
-wchar_t *wcpncpy(wchar_t *restrict d : itype(restrict _Array_ptr<wchar_t>) count(n),
-                 const wchar_t *restrict s,
+wchar_t *wcpncpy(wchar_t *__restrict d : itype(__restrict _Array_ptr<wchar_t>) count(n),
+                 const wchar_t *__restrict s,
                  size_t n)
   : itype(_Array_ptr<wchar_t>) count(n);
 int wcscasecmp(const wchar_t *, const wchar_t *);
