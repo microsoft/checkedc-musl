@@ -190,9 +190,9 @@ wchar_t *wcsdup(const wchar_t *);
 size_t wcsnlen(const wchar_t *s : itype(_Nt_array_ptr<const wchar_t>) count(n), size_t n);
 wchar_t *wcpcpy (wchar_t *__restrict, const wchar_t *__restrict);
 // Copies at most n wide characters from the wide-character string pointed to by s, including the terminating null wide ('\0'), to the array pointed to by d
-wchar_t *wcpncpy(wchar_t *__restrict d : itype(__restrict _Array_ptr<wchar_t>) count(n),
-                 const wchar_t *__restrict s,
-                 size_t n)
+wchar_t *wcpncpy (wchar_t *__restrict : itype(__restrict _Array_ptr<wchar_t>) count(n),
+                  const wchar_t *__restrict,
+                  size_t n)
   : itype(_Array_ptr<wchar_t>) count(n);
 int wcscasecmp(const wchar_t *, const wchar_t *);
 int wcscasecmp_l(const wchar_t *, const wchar_t *, locale_t);

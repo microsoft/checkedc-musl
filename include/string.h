@@ -94,7 +94,7 @@ char *stpcpy(char *__restrict, const char *__restrict);
 char *stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
               const char *restrict s,
               size_t n)
-  : itype(_Array_ptr<char>) count(n);
+  :itype(_Array_ptr<char>) count(n);
 // Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
 size_t strnlen (const char * : itype(_Nt_array_ptr<const char>) count(n), size_t n);
 char *strdup (const char *);
@@ -115,6 +115,7 @@ void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_c
                size_t n)
   : itype(_Array_ptr<void>) byte_count(n);
 #endif
+
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 char *strsep(char **, const char *);
 // Appends the NUL-terminated string s to the end of d.
