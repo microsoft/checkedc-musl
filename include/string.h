@@ -24,10 +24,10 @@ extern "C" {
 
 // Returns a pointer to dest.
 // Copies n bytes from src to the memory region dest points to.
-void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(arg_n),
-              const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(arg_n),
-              size_t arg_n)
-  : itype(_Array_ptr<void>) byte_count(arg_n);
+void *memcpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
+              const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
+              size_t n)
+  : itype(_Array_ptr<void>) byte_count(n);
 // Returns a pointer to dest.
 // Copies n bytes from memory area src to memory area dest. The memory areas may overlap.
 void *memmove (void *dest: itype(_Array_ptr<void>) byte_count(n),
@@ -91,10 +91,10 @@ int strerror_r (int, char *, size_t);
 char *stpcpy(char *__restrict, const char *__restrict);
 // Copies at most n characters from the string pointed to by src, including the terminating null byte ('\0'),
 // to the array pointed to by dest.
-char *stpncpy(char *restrict arg_d : itype(restrict _Array_ptr<char>) count(arg_n),
+char *stpncpy(char *restrict d : itype(restrict _Array_ptr<char>) count(n),
               const char *restrict s,
-              size_t arg_n)
-  : itype(_Array_ptr<char>) count(arg_n);
+              size_t n)
+  : itype(_Array_ptr<char>) count(n);
 // Returns the number of bytes in the string pointed to by s, excluding the terminating null byte ('\0').
 size_t strnlen (const char * : itype(_Nt_array_ptr<const char>) count(n), size_t n);
 char *strdup (const char *);
@@ -109,11 +109,11 @@ size_t strxfrm_l (char *__restrict, const char *__restrict, size_t, locale_t);
  || defined(_BSD_SOURCE)
 // Returns a pointer to the next character in dest after c.
 // Copies no more than n bytes from memory area src to memory area dest, stopping when the character c is found.
-void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(arg_n),
-               const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(arg_n),
+void *memccpy (void *__restrict dest : itype(__restrict _Array_ptr<void>) byte_count(n),
+               const void *__restrict src : itype(__restrict _Array_ptr<const void>) byte_count(n),
                int c,
-               size_t arg_n)
-  : itype(_Array_ptr<void>) byte_count(arg_n);
+               size_t n)
+  : itype(_Array_ptr<void>) byte_count(n);
 #endif
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 char *strsep(char **, const char *);
