@@ -1,13 +1,15 @@
 #include <string.h>
 #include <stdint.h>
 
-void *memset (void * dest: itype(_Array_ptr<void>) byte_count(n),
+void *memset (void * dest: itype(_Array_ptr<void>) byte_count(arg_n),
               int c,
-              size_t n)
-  : byte_count(n)
+              size_t arg_n)
+  : byte_count(arg_n)
 _Checked
 {
-	_Array_ptr<unsigned char> s : count(n) = dest;
+	size_t n = arg_n;
+	_Array_ptr<unsigned char> s : bounds((_Array_ptr<unsigned char>)dest, (_Array_ptr<unsigned char>)dest + arg_n)
+                                    = dest;
 	size_t k;
 
 	/* Fill head and tail with minimal branching. Each
@@ -49,22 +51,22 @@ _Checked
 	 * conditional below ensures that the subsequent offsets
 	 * are valid (e.g. !(n<=24) implies n>=28). */
 
-	*(u32 *)(s+0) = c32;
-	*(u32 *)(s+n-4) = c32;
+	*(_Array_ptr<u32>)(s+0) = c32;
+	*(_Array_ptr<u32>)(s+n-4) = c32;
 	if (n <= 8) return dest;
-	*(u32 *)(s+4) = c32;
-	*(u32 *)(s+8) = c32;
-	*(u32 *)(s+n-12) = c32;
-	*(u32 *)(s+n-8) = c32;
+	*(_Array_ptr<u32>)(s+4) = c32;
+	*(_Array_ptr<u32>)(s+8) = c32;
+	*(_Array_ptr<u32>)(s+n-12) = c32;
+	*(_Array_ptr<u32>)(s+n-8) = c32;
 	if (n <= 24) return dest;
-	*(u32 *)(s+12) = c32;
-	*(u32 *)(s+16) = c32;
-	*(u32 *)(s+20) = c32;
-	*(u32 *)(s+24) = c32;
-	*(u32 *)(s+n-28) = c32;
-	*(u32 *)(s+n-24) = c32;
-	*(u32 *)(s+n-20) = c32;
-	*(u32 *)(s+n-16) = c32;
+	*(_Array_ptr<u32>)(s+12) = c32;
+	*(_Array_ptr<u32>)(s+16) = c32;
+	*(_Array_ptr<u32>)(s+20) = c32;
+	*(_Array_ptr<u32>)(s+24) = c32;
+	*(_Array_ptr<u32>)(s+n-28) = c32;
+	*(_Array_ptr<u32>)(s+n-24) = c32;
+	*(_Array_ptr<u32>)(s+n-20) = c32;
+	*(_Array_ptr<u32>)(s+n-16) = c32;
 
 	/* Align to a multiple of 8 so we can fill 64 bits at a time,
 	 * and avoid writing the same bytes twice as much as is
@@ -80,10 +82,10 @@ _Checked
 
 	u64 c64 = c32 | ((u64)c32 << 32);
 	for (; n >= 32; n-=32, s+=32) {
-		*(u64 *)(s+0) = c64;
-		*(u64 *)(s+8) = c64;
-		*(u64 *)(s+16) = c64;
-		*(u64 *)(s+24) = c64;
+		*(_Array_ptr<u64>)(s+0) = c64;
+		*(_Array_ptr<u64>)(s+8) = c64;
+		*(_Array_ptr<u64>)(s+16) = c64;
+		*(_Array_ptr<u64>)(s+24) = c64;
 	}
 #else
 	/* Pure C fallback with no aliasing violations. */
