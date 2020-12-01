@@ -11,7 +11,7 @@
 int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	int af,
 	struct hostent *h : itype(_Ptr<struct hostent>),
-	char *buf_ori : count(buflen),
+	char *arg_buf : count(buflen),
 	size_t buflen,
 	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
 	int *err : itype(_Ptr<int>))
@@ -43,7 +43,7 @@ int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	h->h_addrtype = af;
 	h->h_length = af==AF_INET6 ? 16 : 4;
 
-	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
+	_Array_ptr<char> buf : bounds(arg_buf, arg_buf + buflen) = arg_buf;
 	/* Align buffer */
 	align = -(uintptr_t)buf & sizeof(char *)-1;
 

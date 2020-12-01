@@ -28,7 +28,8 @@ double strtod (const char *__restrict, char **__restrict);
 long double strtold (const char *__restrict, char **__restrict);
 
 long strtol (const char *__restrict, char **__restrict, int);
-unsigned long strtoul (const char *__restrict, char **__restrict, int);
+unsigned long strtoul (const char *__restrict : itype(__restrict _Nt_array_ptr<const char>),
+                       char **__restrict : itype(__restrict _Ptr<_Nt_array_ptr<char>>), int);
 long long strtoll (const char *__restrict, char **__restrict, int);
 unsigned long long strtoull (const char *__restrict, char **__restrict, int);
 

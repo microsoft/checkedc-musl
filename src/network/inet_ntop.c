@@ -11,22 +11,26 @@
 // pointer.  The caller specifies the number of bytes available in this
 // buffer in the argument l.  a0 must have at least 16 bytes.
 const char *inet_ntop(int af,
-	const void *restrict a0 : byte_count(16),
-	char *restrict s : count(l),
+	const void *restrict a0 : itype(restrict _Array_ptr<const void>),
+	char *restrict s : itype(restrict _Nt_array_ptr<char>) count(l),
 	socklen_t l) : itype(_Nt_array_ptr<const char>)
 {
-	_Array_ptr<const unsigned char> a : count(16) = a0;
 	int i, j, max, best;
 	char buf _Nt_checked[100];
 
 	switch (af) {
-	case AF_INET:
+	case AF_INET: {
+		_Array_ptr<const unsigned char> a : count(4) = 0;
 		_Unchecked {
+			a = _Assume_bounds_cast<_Array_ptr<const unsigned char>>(a0, count(4));
 			if (snprintf(s, l, "%d.%d.%d.%d", a[0],a[1],a[2],a[3]) < l)
 				return s;
 		}
 		break;
-	case AF_INET6:
+	}
+	case AF_INET6: {
+		_Array_ptr<const unsigned char> a : count(16) = 0;
+		_Unchecked{ a = _Assume_bounds_cast<_Array_ptr<const unsigned char>>(a0, count(16)); }
 		if (memcmp(a, "\0\0\0\0\0\0\0\0\0\0\377\377", 12)) _Unchecked {
 			snprintf((char *)buf, sizeof buf,
 				"%x:%x:%x:%x:%x:%x:%x:%x",
@@ -53,7 +57,12 @@ const char *inet_ntop(int af,
 		}
 		if (max>3) {
 			buf[best] = buf[best+1] = ':';
-			memmove(buf+best+2, buf+best+max, i-best-max+1);
+			size_t arg_count = (size_t)(i-best-max+1);
+			_Array_ptr<char> buf_dest : count(arg_count) =
+                                _Dynamic_bounds_cast<_Array_ptr<char>>(buf+best+2, count(arg_count));
+			_Array_ptr<char> buf_src : count(arg_count) =
+                                _Dynamic_bounds_cast<_Array_ptr<char>>(buf+best+max, count(arg_count));
+			memmove(buf_dest, buf_src, arg_count);
 		}
 		_Unchecked {
 			if (strlen((char *)buf) < l) {
@@ -62,6 +71,7 @@ const char *inet_ntop(int af,
 			}
 		}
 		break;
+	}
 	default:
 		errno = EAFNOSUPPORT;
 		return 0;

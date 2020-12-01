@@ -62,7 +62,7 @@ _Checked int ns_initparse(const unsigned char *msg : count(msglen),
 	// Temporarily use an unchecked block to mask a compiler warning on inability to prove that the inferred
 	// bounds(msg, handle->_eom) implies bounds(msg, msg + msglen) on the assignment to handle->_msg.
 	// TODO(yahsun): the compiler should be able to prove the above bounds invariant when the two assignments
-	// are in a boundled block. So the warning(s) should disapear once boundled blocks are implemented.
+	// are in a bundled block. So the warning(s) should disapear once bundled blocks are implemented.
 	_Unchecked {
 		handle->_msg = msg;
 		handle->_eom = msg + msglen;
