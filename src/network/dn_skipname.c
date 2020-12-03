@@ -1,7 +1,7 @@
 #include <resolv.h>
 
 _Checked int dn_skipname(const unsigned char *s : bounds(s, end),
-	const unsigned char *end : count(0))
+	const unsigned char *end : itype(_Array_ptr<const unsigned char>))
 {
 	_Array_ptr<const unsigned char> p : bounds(s, end) = s;
 	while (p < end)

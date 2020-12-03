@@ -23,7 +23,7 @@ int __inet_aton(const char *s0 : itype(_Nt_array_ptr<const char>),
 	for (i=0; i<4; i++) {
 		_Unchecked {
 			char *zp;
-			a[i] = strtoul(s, &zp, 0);
+			a[i] = strtoul((const char *)s, &zp, 0);
 			z = _Assume_bounds_cast<_Nt_array_ptr<char>>(zp, bounds(s0, s0 + s_cnt));
 		}
 		if (z==s || (*z && *z != '.') || !isdigit(*s))

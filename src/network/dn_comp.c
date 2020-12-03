@@ -117,15 +117,9 @@ int dn_comp(const char *arg_src : itype(_Nt_array_ptr<const char>),
 	int i, j, n, m=0, offset, bestlen=0, bestoff;
 	unsigned char lens _Checked[127];
 	size_t l;
-	// TODO: bounds-safe interface for the 1st parameter of strnlen appears incorrect. It should
-	// accept an Nt_array_ptr with count(0).
-	_Unchecked {
-		l = strnlen((const char *)arg_src, 255);
-	}
+	_Unchecked { l = strnlen((const char *)arg_src, 255); }
 	_Nt_array_ptr<const char> src : count(l) = 0;
-	_Unchecked {
-		src = _Assume_bounds_cast<_Nt_array_ptr<const char>>(arg_src, count(l));
-	}
+	_Unchecked { src = _Assume_bounds_cast<_Nt_array_ptr<const char>>(arg_src, count(l)); }
 	if (l && src[l-1] == '.') l--;
 	if (l>253 || space<=0) return -1;
 	if (!l) {

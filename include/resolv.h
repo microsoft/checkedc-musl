@@ -160,13 +160,13 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	int space,
 	unsigned char **dnptrs : bounds(dnptrs, lastdnptr) itype(_Array_ptr<_Nt_array_ptr<unsigned char>>),
 	unsigned char **lastdnptr : count(0) itype(_Array_ptr<_Nt_array_ptr<unsigned char>>));
-int dn_expand(const unsigned char *base : bounds(src, end),
+int dn_expand(const unsigned char *base : bounds(base, end),
 	const unsigned char *end : itype(_Array_ptr<const unsigned char>),
-	const unsigned char *src : bounds(src, end),
-	char *dest : count(space > 254 ? 254 : space),
+	const unsigned char *src : bounds(base, end),
+	char *dest : count(space),
 	int space);
 int dn_skipname(const unsigned char *s : bounds(s, end),
-	const unsigned char *end : count(0));
+	const unsigned char *end : itype(_Array_ptr<const unsigned char>));
 
 #ifdef __cplusplus
 }

@@ -37,7 +37,7 @@ typedef enum __ns_sect {
 } ns_sect;
 
 typedef struct __ns_msg {
-	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(_Ptr<const unsigned char>);
+	const unsigned char *_msg : bounds(_msg, _eom), *_eom : itype(_Array_ptr<const unsigned char>);
 	uint16_t _id, _flags, _counts[ns_s_max] : itype(uint16_t _Nt_checked[ns_s_max]);
 	// _sections is a fixed-size array of _Array_ptr<const unsigned char>. The inner _Array_ptr has
 	// bounds(_msg_ptr, _eom). But we cannot specify bounds for an inner array in Checked C yet.
@@ -45,7 +45,7 @@ typedef struct __ns_msg {
 	const unsigned char *_sections[ns_s_max] : itype(_Array_ptr<const unsigned char> _Checked[ns_s_max]);
 	ns_sect _sect;
 	int _rrnum;
-	const unsigned char *_msg_ptr : bounds(_msg_ptr, _eom) itype(_Array_ptr<const unsigned char>);
+	const unsigned char *_msg_ptr : bounds(_msg, _eom) itype(_Array_ptr<const unsigned char>);
 } ns_msg;
 
 struct _ns_flagdata {  int mask, shift;  };
@@ -306,10 +306,10 @@ typedef enum __ns_cert_types {
 #define NS_OPT_DNSSEC_OK        0x8000U
 #define NS_OPT_NSID		3
 
-#define NS_GET16(s, cp) (void)((s) = ns_get16(((cp)+=2)-2))
-#define NS_GET32(l, cp) (void)((l) = ns_get32(((cp)+=4)-4))
-#define NS_PUT16(s, cp) ns_put16((s), ((cp)+=2)-2)
-#define NS_PUT32(l, cp) ns_put32((l), ((cp)+=4)-4)
+#define NS_GET16(s, arg_cp, cp) (void)((s) = ns_get16(arg_cp)); (cp)+=2
+#define NS_GET32(l, arg_cp, cp) (void)((l) = ns_get32(arg_cp)); (cp)+=4
+#define NS_PUT16(s, arg_cp, cp) ns_put16((s), (arg_cp)); (cp)+=2
+#define NS_PUT32(l, arg_cp, cp) ns_put32((l), (arg_cp)); (cp)+=4
 
 // ns_get16 returns as an unsigned the concatenation of the 2 bytes pointed by cp in reversed order.
 unsigned ns_get16(const unsigned char *cp : count(2));
@@ -337,7 +337,7 @@ int ns_parserr(ns_msg *handle : itype(_Ptr<ns_msg>),
 	ns_rr *rr : itype(_Ptr<ns_rr>));
 
 int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
-	const unsigned char *eom : itype(_Ptr<const unsigned char>),
+	const unsigned char *eom : itype(_Array_ptr<const unsigned char>),
 	ns_sect section,
 	int count);
 
@@ -345,8 +345,8 @@ int ns_skiprr(const unsigned char *cp : bounds(cp, eom),
 // the result to dst which has size dst_size. eom is a pointer to the first byte after the message.
 // It is used to make sure that ns_name_uncompress doesn't go past the end of the message.
 int ns_name_uncompress(const unsigned char *msg : bounds(msg, eom),
-	const unsigned char *eom : itype(_Ptr<const unsigned char>),
-	const unsigned char *src : bounds(src, eom),
+	const unsigned char *eom : itype(_Array_ptr<const unsigned char>),
+	const unsigned char *src : bounds(msg, eom),
 	char *dst : count(dst_size) itype(_Array_ptr<char>),
 	size_t dst_size);
 

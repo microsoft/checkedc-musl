@@ -3,10 +3,10 @@
 
 #include "../../include/resolv.h"
 
-hidden int __dn_expand(const unsigned char *base : bounds(src, end),
+hidden int __dn_expand(const unsigned char *base : bounds(base, end),
     const unsigned char *end : itype(_Array_ptr<const unsigned char>),
-    const unsigned char *src : bounds(src, end),
-    char *dest : count(space > 254 ? 254 : space),
+    const unsigned char *src : bounds(base, end),
+    char *dest : count(space),
     int space);
 
 hidden int __res_mkquery(int op,
