@@ -15,8 +15,7 @@ static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated
 	_Nt_array_ptr<const unsigned char> arg_s)
 {
 	int i=0;
-	size_t len_s;
-	_Unchecked { len_s = strlen((_Nt_array_ptr<const char>)arg_s); }
+	size_t len_s = strlen((_Nt_array_ptr<const char>)arg_s);
 	_Nt_array_ptr<const unsigned char> s : bounds(arg_s, arg_s + len_s) = 0;
 	_Nt_array_ptr<const unsigned char> base : bounds(arg_s, arg_s + len_s) = 0;
 	_Unchecked {
@@ -74,8 +73,7 @@ static int match(_Ptr<int> offset,
 	// Start from the end of the input domain name (src in dn_comp).
 	int nlen = arg_nlen;
 	_Array_ptr<const char> end : bounds(arg_src, arg_end) = arg_end;
-	size_t len_base;
-	_Unchecked { len_base = strlen((const char *)arg_base); }
+	size_t len_base = strlen((_Nt_array_ptr<const char>)arg_base);
 	_Nt_array_ptr<const unsigned char> base : bounds(arg_base, arg_base + len_base) = 0;
 	_Unchecked { base = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>
 	                                       (arg_base, bounds(arg_base, arg_base + len_base)); }

@@ -10,8 +10,7 @@
 int __inet_aton(const char *s0 : itype(_Nt_array_ptr<const char>),
 	struct in_addr *dest : itype(_Ptr<struct in_addr>))
 {
-	unsigned int s_cnt = 0;
-	_Unchecked { s_cnt = strlen(s0); }
+	unsigned int s_cnt = strlen(s0);
 	_Nt_array_ptr<const char> s : bounds(s0, s0 + s_cnt) = 0;
 	_Unchecked {s = _Assume_bounds_cast<_Nt_array_ptr<const char>>(s0, count(s_cnt));}
 	// Struct in_addr has 32 bytes. Cast it to unsigned char pointer with count(4).

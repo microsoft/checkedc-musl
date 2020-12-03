@@ -75,7 +75,7 @@ char *strpbrk (const char *, const char *);
 char *strstr (const char *, const char *);
 char *strtok (char *__restrict, const char *__restrict);
 // Returns the length of string.
-size_t strlen (const char * : itype(_Array_ptr<const char>));
+size_t strlen (const char * : itype(_Nt_array_ptr<const char>));
 
 char *strerror (int);
 

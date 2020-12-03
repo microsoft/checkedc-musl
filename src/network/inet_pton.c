@@ -23,8 +23,7 @@ int inet_pton(int af,
 {
 	uint16_t ip _Checked[8];
 	int i, j, v, d, brk=-1, need_v4=0;
-	unsigned int s_cnt = 0;
-	_Unchecked { s_cnt = strlen(s); }
+	unsigned int s_cnt = strlen(s);
 	_Nt_array_ptr<const char> sw : bounds(s, s + s_cnt) = 0;
 	_Unchecked {sw = _Assume_bounds_cast<_Nt_array_ptr<const char>>(s, count(s_cnt));}
 
