@@ -64,11 +64,9 @@ const char *inet_ntop(int af,
                                 _Dynamic_bounds_cast<_Array_ptr<char>>(buf+best+max, count(arg_count));
 			memmove(buf_dest, buf_src, arg_count);
 		}
-		_Unchecked {
-			if (strlen((char *)buf) < l) {
-				strcpy((char *)s, (char *)buf);
-				return s;
-			}
+		if (strlen(buf) < l) {
+			strcpy(s, buf);
+			return s;
 		}
 		break;
 	}
