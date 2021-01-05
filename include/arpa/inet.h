@@ -18,9 +18,9 @@ in_addr_t inet_network (const char *p : itype(_Nt_array_ptr<const char>));
 char *inet_ntoa (struct in_addr in) : count(15) itype(_Nt_array_ptr<char>);
 int inet_pton (int af,
 	const char *restrict s : itype(restrict _Nt_array_ptr<const char>),
-        void *restrict a0 : itype(restrict _Array_ptr<void>));
+        void *restrict a0 : byte_count(af==AF_INET ? 4 : 16));
 const char *inet_ntop (int af,
-	const void *restrict a0 : itype(restrict _Array_ptr<const void>),
+	const void *restrict a0 : byte_count(af==AF_INET ? 4 : 16),
 	char *restrict s : itype(restrict _Nt_array_ptr<char>) count(l),
 	socklen_t l) : itype(_Nt_array_ptr<const char>);
 int inet_aton (const char *s0 : itype(_Nt_array_ptr<const char>),

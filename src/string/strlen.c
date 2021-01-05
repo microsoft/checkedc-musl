@@ -11,15 +11,14 @@ size_t strlen(const char *arg_s : itype(_Nt_array_ptr<const char>))
 _Checked{
 	_Nt_array_ptr<const char> s1 : bounds(arg_s, s1) = arg_s;
 #ifdef __GNUC__
-	_Unchecked
-	{
-		const char *s = (const char *)s1;
-		typedef size_t __attribute__((__may_alias__)) word;
-		const word *w;
-		for (; (uintptr_t)s % ALIGN; s++) if (!*s) return s-arg_s;
-		for (w = (const void *)s; !HASZERO(*w); w++);
-		s = (const void *)w;
-		s1 = _Assume_bounds_cast<_Nt_array_ptr<const char>>(s, bounds(arg_s, s));
+	_Unchecked {
+	const char *s = (const char *)s1;
+	typedef size_t __attribute__((__may_alias__)) word;
+	const word *w;
+	for (; (uintptr_t)s % ALIGN; s++) if (!*s) return s-arg_s;
+	for (w = (const void *)s; !HASZERO(*w); w++);
+	s = (const void *)w;
+	s1 = _Assume_bounds_cast<_Nt_array_ptr<const char>>(s, bounds(arg_s, s));
 	}
 #endif
 

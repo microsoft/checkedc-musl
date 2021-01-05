@@ -11,7 +11,7 @@
 // pointer.  The caller specifies the number of bytes available in this
 // buffer in the argument l.  a0 must have at least 16 bytes.
 const char *inet_ntop(int af,
-	const void *restrict a0 : itype(restrict _Array_ptr<const void>),
+	const void *restrict a0 : byte_count(af==AF_INET ? 4 : 16),
 	char *restrict s : itype(restrict _Nt_array_ptr<char>) count(l),
 	socklen_t l) : itype(_Nt_array_ptr<const char>)
 {
@@ -21,8 +21,8 @@ const char *inet_ntop(int af,
 	switch (af) {
 	case AF_INET: {
 		_Array_ptr<const unsigned char> a : count(4) = 0;
+		a = _Dynamic_bounds_cast<_Array_ptr<const unsigned char>>(a0, count(4));
 		_Unchecked {
-			a = _Assume_bounds_cast<_Array_ptr<const unsigned char>>(a0, count(4));
 			if (snprintf(s, l, "%d.%d.%d.%d", a[0],a[1],a[2],a[3]) < l)
 				return s;
 		}
@@ -30,7 +30,7 @@ const char *inet_ntop(int af,
 	}
 	case AF_INET6: {
 		_Array_ptr<const unsigned char> a : count(16) = 0;
-		_Unchecked{ a = _Assume_bounds_cast<_Array_ptr<const unsigned char>>(a0, count(16)); }
+		a = _Dynamic_bounds_cast<_Array_ptr<const unsigned char>>(a0, count(16));
 		if (memcmp(a, "\0\0\0\0\0\0\0\0\0\0\377\377", 12)) _Unchecked {
 			snprintf((char *)buf, sizeof buf,
 				"%x:%x:%x:%x:%x:%x:%x:%x",
@@ -65,7 +65,7 @@ const char *inet_ntop(int af,
 			memmove(buf_dest, buf_src, arg_count);
 		}
 		if (strlen(buf) < l) {
-			strcpy(s, buf);
+			_Unchecked {strcpy((char *)s, buf);}
 			return s;
 		}
 		break;

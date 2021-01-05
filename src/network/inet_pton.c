@@ -19,10 +19,11 @@ static int hexval(unsigned c)
 // AF_INET6.  a0 is written in network byte order.
 int inet_pton(int af,
 	const char *restrict s : itype(restrict _Nt_array_ptr<const char>),
-	void *restrict a0 : itype(restrict _Array_ptr<void>))
+	void *restrict a0 : byte_count(af==AF_INET ? 4 : 16)) 
 {
 	uint16_t ip _Checked[8];
 	int i, j, v, d, brk=-1, need_v4=0;
+	// TODO: Cleanup the _Assume_bounds_cast once the strlen-based bounds widening is implemented.
 	unsigned int s_cnt = strlen(s);
 	_Nt_array_ptr<const char> sw : bounds(s, s + s_cnt) = 0;
 	_Unchecked {sw = _Assume_bounds_cast<_Nt_array_ptr<const char>>(s, count(s_cnt));}
@@ -30,7 +31,7 @@ int inet_pton(int af,
 	if (af==AF_INET) {
 		_Array_ptr<unsigned char> a : bounds((_Array_ptr<unsigned char>)a0,
                                                            (_Array_ptr<unsigned char>)a0 + 4) = 0;
-		_Unchecked { a = _Assume_bounds_cast<_Array_ptr<unsigned char>>(a0, count(4)); }
+		a = _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(a0, count(4));
 		for (i=0; i<4; i++) {
 			for (v=j=0; j<3 && sw[j] && isdigit(sw[j]); j++)
 				v = 10*v + sw[j]-'0';
@@ -48,7 +49,7 @@ int inet_pton(int af,
 
 	_Array_ptr<unsigned char> a : bounds((_Array_ptr<unsigned char>)a0,
                                              (_Array_ptr<unsigned char>)a0 + 16) = 0;
-	_Unchecked { a = _Assume_bounds_cast<_Array_ptr<unsigned char>>(a0, count(16)); }
+	a = _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(a0, count(16));
 	if (*sw==':' && *++sw!=':') return 0;
 
 	for (i=0; ; i++) {
@@ -87,6 +88,7 @@ int inet_pton(int af,
 		*a++ = ip[j];
 	}
 	_Nt_array_ptr<char> arg_sw = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(sw, count(0));
-	if (need_v4 && inet_pton(AF_INET, arg_sw, a-4) <= 0) return 0;
+	_Array_ptr<void> arg_a : byte_count(4) = _Dynamic_bounds_cast<_Array_ptr<void>>(a - 4, byte_count(4));
+	if (need_v4 && inet_pton(AF_INET, arg_sw, arg_a) <= 0) return 0;
 	return 1;
 }
