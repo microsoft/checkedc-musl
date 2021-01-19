@@ -16,7 +16,8 @@ _Checked int __res_mkquery(int op,
 	unsigned char q _Checked[280];
 	struct timespec ts;
 	size_t l, bl;
-	_Unchecked { bl = strnlen((const char *)arg_dname, 255); }
+	// TODO: Cleanup the _Assume_bounds_cast once the strlen-based bounds widening is implemented.
+	bl = strnlen(arg_dname, 255);
 	_Nt_array_ptr<const char> dname : bounds(arg_dname, arg_dname + bl) = 0;
 	_Unchecked { dname = _Assume_bounds_cast<_Nt_array_ptr<const char>>(arg_dname, count(bl)); }
 	l = bl;

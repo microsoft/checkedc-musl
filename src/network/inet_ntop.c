@@ -64,8 +64,9 @@ const char *inet_ntop(int af,
                                 _Dynamic_bounds_cast<_Array_ptr<char>>(buf+best+max, count(arg_count));
 			memmove(buf_dest, buf_src, arg_count);
 		}
-		if (strlen(buf) < l) {
-			_Unchecked {strcpy((char *)s, buf);}
+		size_t buf_len = strlen(buf);
+		if (buf_len < l) {
+			_Unchecked {strncpy(s, (const char *)buf, buf_len+1);}
 			return s;
 		}
 		break;

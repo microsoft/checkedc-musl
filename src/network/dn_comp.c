@@ -55,9 +55,9 @@ static int getlens(_Array_ptr<unsigned char> lens : count(127), // Fixed-size, a
 
 // match matches the longest suffix of an ascii domain with a compressed domain name dn.
 // Returns the length of the common suffix and store the offset.
-// base and dn initially have count(0) prefixes. end points to the end of the unmatched
-// part of the domain name src. The bounds of end are not passed as parameters but recovered
-// indirectly from lens. Add parameter src to recover bounds information for end.
+// arg_base and dn initially have count(0) prefixes.
+// Add parameter arg_src to recover bounds information for arg_end.
+// arg_end points to the end of the unmatched part of the domain name arg_src.
 static int match(_Ptr<int> offset,
 	_Nt_array_ptr<const unsigned char> arg_base,
 	_Nt_array_ptr<const unsigned char> dn,
@@ -117,7 +117,8 @@ int dn_comp(const char *arg_src : itype(_Nt_array_ptr<const char>),
 	int i, j, n, m=0, offset, bestlen=0, bestoff;
 	unsigned char lens _Checked[127];
 	size_t l;
-	_Unchecked { l = strnlen((const char *)arg_src, 255); }
+	// TODO: Cleanup the _Assume_bounds_cast once the strlen-based bounds widening is implemented.
+	l = strnlen(arg_src, 255);
 	_Nt_array_ptr<const char> src : count(l) = 0;
 	_Unchecked { src = _Assume_bounds_cast<_Nt_array_ptr<const char>>(arg_src, count(l)); }
 	if (l && src[l-1] == '.') l--;

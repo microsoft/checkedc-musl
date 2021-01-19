@@ -47,10 +47,12 @@ int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	/* Align buffer */
 	align = -(uintptr_t)buf & sizeof(char *)-1;
 
+	size_t name_len = strlen(name);
+	size_t canon_len = strlen(canon);
 	need = 4*sizeof(char *);
 	need += (cnt + 1) * (sizeof(char *) + h->h_length);
-	need += strlen(name)+1;
-	need += strlen(canon)+1;
+	need += name_len+1;
+	need += canon_len+1;
 	need += align;
 
 	if (need > buflen) return ERANGE;
@@ -69,12 +71,12 @@ int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	h->h_addr_list[i] = 0;
 
 	h->h_name = h->h_aliases[0] = buf;
-	strcpy(h->h_name, canon);
+	strncpy(h->h_name, (const char *)canon, canon_len+1);
 	buf += strlen(h->h_name)+1;
 
 	if (strcmp(h->h_name, name)) {
 		h->h_aliases[1] = buf;
-		strcpy(h->h_aliases[1], name);
+		strncpy(h->h_aliases[1], name, name_len+1);
 		buf += strlen(h->h_aliases[1])+1;
 	} else h->h_aliases[1] = 0;
 
