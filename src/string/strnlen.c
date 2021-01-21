@@ -2,7 +2,8 @@
 #include <stdint.h>
 #include <limits.h>
 
-#define ALIGN (sizeof(size_t))
+#define SS (sizeof(size_t))
+#define ALIGN (sizeof(size_t)-1)
 #define ONES ((size_t)-1/UCHAR_MAX)
 #define HIGHS (ONES * (UCHAR_MAX/2+1))
 #define HASZERO(x) ((x)-ONES & ~(x) & HIGHS)
@@ -23,8 +24,8 @@ _Checked{
         const char *s = (const char *)s1;
         typedef size_t __attribute__((__may_alias__)) word;
         const word *w;
-        for (; n && (uintptr_t)s % ALIGN; s++, n--) if (!*s) return s-arg_s;
-        for (w = (const void *)s; n >= ALIGN && !HASZERO(*w); w++, n-=ALIGN);
+        for (; n && (uintptr_t)s & ALIGN; s++, n--) if (!*s) return s-arg_s;
+        for (w = (const void *)s; n >=SS && !HASZERO(*w); w++, n-=SS);
         s = (const void *)w;
         s1 = _Assume_bounds_cast<_Nt_array_ptr<const char>>(s, bounds(arg_s, s));
         }
