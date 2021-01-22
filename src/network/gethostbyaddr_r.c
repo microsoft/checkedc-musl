@@ -11,11 +11,12 @@ int gethostbyaddr_r(const void *a : byte_count(l),
 	socklen_t l,
 	int af,
 	struct hostent *h : itype(_Ptr<struct hostent>),
-	char *buf_ori : count(buflen),
-	size_t buflen,
+	char *arg_buf : count(arg_buflen),
+	size_t arg_buflen,
 	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
 	int *err : itype(_Ptr<int>))
 {
+	size_t buflen = arg_buflen;
 	union {
 		struct sockaddr_in sin;
 		struct sockaddr_in6 sin6;
@@ -34,7 +35,7 @@ int gethostbyaddr_r(const void *a : byte_count(l),
 	}
 
 	/* Align buffer and check for space for pointers and ip address */
-	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
+	_Array_ptr<char> buf : bounds(arg_buf, arg_buf + arg_buflen) = arg_buf;
 	i = (uintptr_t)buf & sizeof(char *)-1;
 	if (!i) i = sizeof(char *);
 	if (buflen <= 5*sizeof(char *)-i + l) return ERANGE;

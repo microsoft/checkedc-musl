@@ -11,7 +11,7 @@
 int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	int af,
 	struct hostent *h : itype(_Ptr<struct hostent>),
-	char *buf_ori : count(buflen),
+	char *arg_buf : count(buflen),
 	size_t buflen,
 	struct hostent **res : itype(_Ptr<_Ptr<struct hostent>>),
 	int *err : itype(_Ptr<int>))
@@ -43,15 +43,16 @@ int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	h->h_addrtype = af;
 	h->h_length = af==AF_INET6 ? 16 : 4;
 
-	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
+	_Array_ptr<char> buf : bounds(arg_buf, arg_buf + buflen) = arg_buf;
 	/* Align buffer */
 	align = -(uintptr_t)buf & sizeof(char *)-1;
 
+	size_t name_len = strlen(name);
+	size_t canon_len = strlen(canon);
 	need = 4*sizeof(char *);
 	need += (cnt + 1) * (sizeof(char *) + h->h_length);
-	need += strlen(name)+1;
-	// TODO: strlen does not accept checked pointers yet.
-	need += strlen((const char *)canon)+1;
+	need += name_len+1;
+	need += canon_len+1;
 	need += align;
 
 	if (need > buflen) return ERANGE;
@@ -70,13 +71,12 @@ int gethostbyname2_r(const char *name : itype(_Nt_array_ptr<const char>),
 	h->h_addr_list[i] = 0;
 
 	h->h_name = h->h_aliases[0] = buf;
-	// TODO: strlen does not accept checked pointers yet.
-	strcpy(h->h_name, (const char *)canon);
+	strncpy(h->h_name, (const char *)canon, canon_len+1);
 	buf += strlen(h->h_name)+1;
 
 	if (strcmp(h->h_name, name)) {
 		h->h_aliases[1] = buf;
-		strcpy(h->h_aliases[1], name);
+		strncpy(h->h_aliases[1], name, name_len+1);
 		buf += strlen(h->h_aliases[1])+1;
 	} else h->h_aliases[1] = 0;
 

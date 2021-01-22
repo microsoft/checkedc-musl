@@ -10,32 +10,30 @@
 // getoffs labels start offsets of a compressed domain name s relative to base, which is
 // the start of the domain name lists. The offsets are stored in the buffer offs with a
 // max length of 128. Returns the size of offs actually used.
-// Null-terminated strings base and s initially have unknown size, i.e., count(0).
 static int getoffs(_Array_ptr<short> offs : count(128), // Fixed-size, allocated in match.
-	_Nt_array_ptr<const unsigned char> base,
-	_Nt_array_ptr<const unsigned char> s)
+	_Nt_array_ptr<const unsigned char> arg_base,
+	_Nt_array_ptr<const unsigned char> arg_s)
 {
 	int i=0;
-	_Nt_array_ptr<const unsigned char> s_tmp : bounds(s, s + 0) = s;
-	_Nt_array_ptr<const unsigned char> s_widened : count(1) = 0;
+	// TODO: Cleanup the _Assume_bounds_cast once the strlen-based bounds widening is implemented.
+	size_t len_s = strlen((_Nt_array_ptr<const char>)arg_s);
+	_Nt_array_ptr<const unsigned char> s : bounds(arg_s, arg_s + len_s) = 0;
+	_Nt_array_ptr<const unsigned char> base : bounds(arg_s, arg_s + len_s) = 0;
+	_Unchecked {
+		s = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(arg_s, bounds(arg_s, arg_s + len_s));
+		base = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>
+		                                        (arg_base, bounds(arg_s, arg_s + len_s));
+	}
 	for (;;) {
-		while (*s_tmp & 0xc0) {
-			if ((*s_tmp & 0xc0) != 0xc0) return 0;
-
-			// (*s & 0xc0) != 0 implies *s != 0. So we can widen the bounds of s.
-			// Manually widen the bounds for now. The compiler cannot figure it out yet.
-			_Unchecked {
-				s_widened = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(s_tmp, count(1));
-			}
-			// Decode offset and calculate the start position of the compressed domain name.
-			s_tmp = base + ((s_widened[0]&0x3f)<<8 | s_widened[1]);
+		while (*s & 0xc0) {
+			if ((*s & 0xc0) != 0xc0) return 0;
+			s = _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>
+			                        (base + ((s[0]&0x3f)<<8 | s[1]), bounds(arg_s, arg_s + len_s));
 		}
-		// s reaches the end of the domain name.
-		if (!*s_tmp) return i;
-		if (s_tmp-base >= 0x4000) return 0;
-		offs[i++] = s_tmp-base;
-		// Move to the next component.
-		s_tmp += *s_tmp + 1;
+		if (!*s) return i;
+		if (s-base >= 0x4000) return 0;
+		offs[i++] = s-base;
+		s += *s + 1;
 	}
 }
 
@@ -57,44 +55,50 @@ static int getlens(_Array_ptr<unsigned char> lens : count(127), // Fixed-size, a
 
 // match matches the longest suffix of an ascii domain with a compressed domain name dn.
 // Returns the length of the common suffix and store the offset.
-// base and dn initially have count(0) prefixes. end points to the end of the unmatched
-// part of the domain name src. The bounds of end are not passed as parameters but recovered
-// indirectly from lens. Add parameter src to recover bounds information for end.
+// arg_base and dn initially have count(0) prefixes.
+// Add parameter arg_src to recover bounds information for arg_end.
+// arg_end points to the end of the unmatched part of the domain name arg_src.
 static int match(_Ptr<int> offset,
-	_Nt_array_ptr<const unsigned char> base,
+	_Nt_array_ptr<const unsigned char> arg_base,
 	_Nt_array_ptr<const unsigned char> dn,
-	_Array_ptr<const char> src : bounds(src, end),
-	_Array_ptr<const char> end : bounds(src, end),
-	_Array_ptr<const unsigned char> lens : count(nlen),
-	const int nlen)
+	_Array_ptr<const char> arg_src : bounds(arg_src, arg_end),
+	_Array_ptr<const char> arg_end : bounds(arg_src, arg_end),
+	_Array_ptr<const unsigned char> lens : count(arg_nlen),
+	const int arg_nlen)
 {
 	int l, o, m=0;
 	short offs _Checked[128];
-	int noff = getoffs(offs, base, dn);
+	int noff = getoffs(offs, arg_base, dn);
 	if (!noff) return 0;
 
 	// Start from the end of the input domain name (src in dn_comp).
-	// Don't decrement nlen and access lens[nlen] at the same time because
-	// lens has count(nlen). Use a temporary ilen instead.
-	int ilen = nlen;
+	int nlen = arg_nlen;
+	_Array_ptr<const char> end : bounds(arg_src, arg_end) = arg_end;
+	// TODO: Cleanup the _Assume_bounds_cast once the strlen-based bounds widening is implemented.
+	size_t len_base = strlen((_Nt_array_ptr<const char>)arg_base);
+	_Nt_array_ptr<const unsigned char> base : bounds(arg_base, arg_base + len_base) = 0;
+	_Unchecked { base = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>
+	                                       (arg_base, bounds(arg_base, arg_base + len_base)); }
 	for (;;) {
-		l = lens[--ilen];
+		l = lens[--nlen];
 		o = offs[--noff];
-		// Widen base using the offset o plus 1, since the first byte of base encodes the length.
-		_Nt_array_ptr<const unsigned char> base_widened : count(o + l + 1) = 0;
-		_Unchecked {
-			base_widened = _Assume_bounds_cast<_Nt_array_ptr<const unsigned char>>(base, count(o + l + 1));
-		}
 		end -= l;
+
+		size_t arg_l = l;
+		_Nt_array_ptr<const unsigned char> arg_base_1 : count(arg_l) =
+		         _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(base+o+1, count(arg_l));
+		_Array_ptr<const char> arg_end_1 : count(arg_l) =
+		         _Dynamic_bounds_cast<_Array_ptr<const char>>(end, count(arg_l));
+
 		// Compare the suffixes. Return if not match.
-		if (l != base_widened[o] || memcmp(base_widened+o+1, end, l))
+		if (l != base[o] || memcmp(arg_base_1, arg_end_1, arg_l))
 			return m;
 
 		// We matched one component. Save offset and continue to the next.
 		*offset = o;
 		m += l;
-		if (ilen) m++;
-		if (!ilen || !noff) return m;
+		if (nlen) m++;
+		if (!nlen || !noff) return m;
 		end--;
 	}
 }
@@ -104,7 +108,7 @@ static int match(_Ptr<int> offset,
 // message. The first pointer points to the beginning of the message and the list ends with NULL.
 // The limit of the array is specified with lastdnptr. If dnptrs is NULL, domain names are not
 // compressed. If lastdnptr is NULL, the list of labels is not updated.
-int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
+int dn_comp(const char *arg_src : itype(_Nt_array_ptr<const char>),
 	unsigned char *dst : count(space - 1) itype(_Nt_array_ptr<unsigned char>),
 	int space,
 	unsigned char **dnptrs : bounds(dnptrs, lastdnptr) itype(_Array_ptr<_Nt_array_ptr<unsigned char>>),
@@ -113,29 +117,26 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	int i, j, n, m=0, offset, bestlen=0, bestoff;
 	unsigned char lens _Checked[127];
 	size_t l;
-	// TODO: bounds-safe interface for the 1st parameter of strnlen appears incorrect. It should
-	// accept an Nt_array_ptr with count(0).
-	_Unchecked {
-		l = strnlen((const char *)src, 255);
-	}
-	_Nt_array_ptr<const char> src_l : count(l) = 0;
-	_Unchecked {
-		src_l = _Assume_bounds_cast<_Nt_array_ptr<const char>>(src, count(l));
-	}
-	if (l && src_l[l-1] == '.') l--;
+	// TODO: Cleanup the _Assume_bounds_cast once the strlen-based bounds widening is implemented.
+	l = strnlen(arg_src, 255);
+	_Nt_array_ptr<const char> src : count(l) = 0;
+	_Unchecked { src = _Assume_bounds_cast<_Nt_array_ptr<const char>>(arg_src, count(l)); }
+	if (l && src[l-1] == '.') l--;
 	if (l>253 || space<=0) return -1;
 	if (!l) {
 		*dst = 0;
 		return 1;
 	}
-	_Array_ptr<const char> end : bounds(src_l, end) = src_l + l;
-	n = getlens(lens, src_l, l);
+	_Array_ptr<const char> end : bounds(src, end) = src + l;
+	n = getlens(lens, src, l);
 	// Invariant: l = sum(lens) + n.
 	if (!n) return -1;
 
-	_Array_ptr<_Nt_array_ptr<unsigned char>> p : bounds(p, lastdnptr) = dnptrs;
+	_Array_ptr<unsigned char> arg_lens : count(n) =
+	                                     _Dynamic_bounds_cast<_Array_ptr<unsigned char>>(lens, count(n));
+	_Array_ptr<_Nt_array_ptr<unsigned char>> p : bounds(dnptrs, lastdnptr) = dnptrs;
 	if (p && *p) for (p++; *p; p++) {
-		m = match(&offset, *dnptrs, *p, src_l, end, lens, n);
+		m = match(&offset, *dnptrs, *p, src, end, arg_lens, n);
 		if (m > bestlen) {
 			bestlen = m;
 			bestoff = offset;
@@ -146,7 +147,11 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 
 	/* encode unmatched part */
 	if (space < l-bestlen+2+(bestlen-1 < l-1)) return -1;
-	memcpy(dst+1, src_l, l-bestlen);
+	_Nt_array_ptr<unsigned char> arg_dst : count(l - bestlen) =
+	         _Dynamic_bounds_cast<_Nt_array_ptr<unsigned char>>(dst + 1, count(l - bestlen));
+	_Nt_array_ptr<const char> arg_src_1 : count(l - bestlen) =
+	         _Dynamic_bounds_cast<_Nt_array_ptr<const char>>(src, count(l - bestlen));
+	memcpy(arg_dst, arg_src_1, l-bestlen);
 	for (i=j=0; i<l-bestlen; i+=lens[j++]+1)
 		dst[i] = lens[j];
 
@@ -161,7 +166,9 @@ int dn_comp(const char *src : itype(_Nt_array_ptr<const char>),
 	if (i>2 && lastdnptr && dnptrs && *dnptrs) {
 		while (*p) p++;
 		if (p+1 < lastdnptr) {
-			*p = dst;
+			_Nt_array_ptr<unsigned char> arg_dst_1 : count(0) =
+	         		_Dynamic_bounds_cast<_Nt_array_ptr<unsigned char>>(dst, count(0));
+			*p = arg_dst_1;
 			p++;
 			*p=0;
 		}

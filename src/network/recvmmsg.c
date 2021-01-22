@@ -16,7 +16,7 @@ _Checked int recvmmsg(int fd,
 	struct timespec *timeout : itype(_Ptr<struct timespec>))
 {
 #if LONG_MAX > INT_MAX
-	_Array_ptr<struct mmsghdr> mh : count(vlen) = msgvec;
+	_Array_ptr<struct mmsghdr> mh : bounds(msgvec, msgvec + vlen) = msgvec;
 	unsigned int i;
 	for (i = vlen; i; i--, mh++)
 		mh->msg_hdr.__pad1 = mh->msg_hdr.__pad2 = 0;

@@ -10,17 +10,18 @@
 int getservbyport_r(int port,
 	const char *prots : itype(_Nt_array_ptr<const char>),
 	struct servent *se : itype(_Ptr<struct servent>),
-	char *buf_ori : count(buflen),
-	size_t buflen,
+	char *arg_buf : count(arg_buflen),
+	size_t arg_buflen,
 	struct servent **res : itype(_Ptr<_Ptr<struct servent>>))
 {
 	int i;
+	size_t buflen = arg_buflen;
 	struct sockaddr_in sin = {
 		.sin_family = AF_INET,
 		.sin_port = port,
 	};
 
-	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
+	_Array_ptr<char> buf : bounds(arg_buf, arg_buf + arg_buflen) = arg_buf;
 	if (!prots) {
 		int r = getservbyport_r(port, "tcp", se, buf, buflen, res);
 		if (r) r = getservbyport_r(port, "udp", se, buf, buflen, res);

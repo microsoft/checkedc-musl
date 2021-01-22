@@ -13,7 +13,7 @@
 int getservbyname_r(const char *name : itype(_Nt_array_ptr<const char>),
 	const char *prots : itype(_Nt_array_ptr<const char>),
 	struct servent *se : itype(_Ptr<struct servent>),
-	char *buf_ori : count(buflen),
+	char *arg_buf : count(buflen),
 	size_t buflen,
 	struct servent **res : itype(_Ptr<_Ptr<struct servent>>))
 {
@@ -27,7 +27,7 @@ int getservbyname_r(const char *name : itype(_Nt_array_ptr<const char>),
 	strtoul(name, &end, 10);
 	if (!*end) return ENOENT;
 
-	_Array_ptr<char> buf : bounds(buf_ori, buf_ori + buflen) = buf_ori;
+	_Array_ptr<char> buf : bounds(arg_buf, arg_buf + buflen) = arg_buf;
 	/* Align buffer */
 	align = -(uintptr_t)buf & ALIGN-1;
 	if (buflen < 2*sizeof(char *)+align)

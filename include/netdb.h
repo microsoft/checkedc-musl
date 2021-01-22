@@ -76,10 +76,10 @@ struct hostent {
 #define h_addr h_addr_list[0]
 
 struct servent {
-	char *s_name;
-	char **s_aliases;
+	char *s_name : itype(_Nt_array_ptr<char>);
+	char **s_aliases : itype(_Nt_array_ptr<_Nt_array_ptr<char>>);
 	int s_port;
-	char *s_proto;
+	char *s_proto : itype(_Nt_array_ptr<char>);
 };
 
 struct protoent {
